@@ -39,3 +39,6 @@ if __name__ == '__main__':
     # helpful for debugging as you can view your dataframes and json outputs
     import streamlit as st 
     st.write("What do you want to debug?")
+    places = pd.read_csv(PLACE_IDS_SOURCE_FILE)
+    geo = reviews_step(places)
+    st.write(geo)  # Display the output of the reviews_step function
