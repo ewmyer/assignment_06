@@ -6,7 +6,7 @@
 
 Before starting this assignment you must:
 
-Install the assignemnt python requirements:
+Install the assignment python requirements:
 
 1. From VS Code, open a terminal: Menu => Terminal => New Terminal
 2. In the terminal, type and enter: `pip install -r requirements.txt`
@@ -24,7 +24,7 @@ There is some code and tests already working in this assignment. These are sanit
 
 ### Debugging
 
-Odd are you will need to use some debugging strategies in this assignment. 
+Odds are you will need to use some debugging strategies in this assignment. 
 
 - To debug a test:
     - call the test function in the `if __name__ == '__main__':` block at the bottom of the test file.
