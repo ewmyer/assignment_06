@@ -1,3 +1,9 @@
-pytest
-pandas
+jupyter
 streamlit
+pandas
+numpy
+matplotlib
+pytest
+
+# project-specific
+requests
