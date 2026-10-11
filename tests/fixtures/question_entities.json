@@ -145,5 +145,233 @@
     "modelVersion": "2026-05-01"
    }
   }
+ },
+ {
+  "question": "Do customers like the Westcott location?",
+  "response": {
+   "kind": "EntityRecognitionResults",
+   "results": {
+    "documents": [
+     {
+      "id": "1",
+      "entities": [
+       {
+        "text": "customers",
+        "category": "PersonType",
+        "offset": 3,
+        "length": 9,
+        "confidenceScore": 0.99
+       },
+       {
+        "text": "Westcott",
+        "category": "Location",
+        "offset": 22,
+        "length": 8,
+        "confidenceScore": 0.95
+       }
+      ],
+      "warnings": []
+     }
+    ],
+    "errors": [],
+    "modelVersion": "2026-05-01"
+   }
+  }
+ },
+ {
+  "question": "What is the most popular product?",
+  "response": {
+   "kind": "EntityRecognitionResults",
+   "results": {
+    "documents": [
+     {
+      "id": "1",
+      "entities": [],
+      "warnings": []
+     }
+    ],
+    "errors": [],
+    "modelVersion": "2026-05-01"
+   }
+  }
+ },
+ {
+  "question": "What do customers complain about most?",
+  "response": {
+   "kind": "EntityRecognitionResults",
+   "results": {
+    "documents": [
+     {
+      "id": "1",
+      "entities": [
+       {
+        "text": "customers",
+        "category": "PersonType",
+        "offset": 8,
+        "length": 9,
+        "confidenceScore": 0.99
+       }
+      ],
+      "warnings": []
+     }
+    ],
+    "errors": [],
+    "modelVersion": "2026-05-01"
+   }
+  }
+ },
+ {
+  "question": "Do people like the chai latte?",
+  "response": {
+   "kind": "EntityRecognitionResults",
+   "results": {
+    "documents": [
+     {
+      "id": "1",
+      "entities": [
+       {
+        "text": "people",
+        "category": "PersonType",
+        "offset": 3,
+        "length": 6,
+        "confidenceScore": 0.51
+       },
+       {
+        "text": "chai latte",
+        "category": "Product",
+        "offset": 19,
+        "length": 10,
+        "confidenceScore": 0.99
+       }
+      ],
+      "warnings": []
+     }
+    ],
+    "errors": [],
+    "modelVersion": "2026-05-01"
+   }
+  }
+ },
+ {
+  "question": "How is the staff at Armory Square?",
+  "response": {
+   "kind": "EntityRecognitionResults",
+   "results": {
+    "documents": [
+     {
+      "id": "1",
+      "entities": [
+       {
+        "text": "staff",
+        "category": "PersonType",
+        "offset": 11,
+        "length": 5,
+        "confidenceScore": 0.67
+       },
+       {
+        "text": "Armory Square",
+        "category": "Organization",
+        "offset": 20,
+        "length": 13,
+        "confidenceScore": 0.99
+       }
+      ],
+      "warnings": []
+     }
+    ],
+    "errors": [],
+    "modelVersion": "2026-05-01"
+   }
+  }
+ },
+ {
+  "question": "How many people are happy with the wescott location?",
+  "response": {
+   "kind": "EntityRecognitionResults",
+   "results": {
+    "documents": [
+     {
+      "id": "1",
+      "entities": [
+       {
+        "text": "wescott",
+        "category": "Location",
+        "offset": 35,
+        "length": 7,
+        "confidenceScore": 0.85
+       }
+      ],
+      "warnings": []
+     }
+    ],
+    "errors": [],
+    "modelVersion": "2026-05-01"
+   }
+  }
+ },
+ {
+  "question": "Is the mocha latte better at Westcott or Armory Square?",
+  "response": {
+   "kind": "EntityRecognitionResults",
+   "results": {
+    "documents": [
+     {
+      "id": "1",
+      "entities": [
+       {
+        "text": "mocha latte",
+        "category": "Product",
+        "offset": 7,
+        "length": 11,
+        "confidenceScore": 0.94
+       },
+       {
+        "text": "Westcott",
+        "category": "Location",
+        "offset": 29,
+        "length": 8,
+        "confidenceScore": 0.98
+       },
+       {
+        "text": "Armory Square",
+        "category": "Location",
+        "offset": 41,
+        "length": 13,
+        "confidenceScore": 0.99
+       }
+      ],
+      "warnings": []
+     }
+    ],
+    "errors": [],
+    "modelVersion": "2026-05-01"
+   }
+  }
+ },
+ {
+  "question": "What do people think of the atmosphere on University Hill?",
+  "response": {
+   "kind": "EntityRecognitionResults",
+   "results": {
+    "documents": [
+     {
+      "id": "1",
+      "entities": [
+       {
+        "text": "University Hill",
+        "category": "Location",
+        "subcategory": "City",
+        "offset": 42,
+        "length": 15,
+        "confidenceScore": 0.64
+       }
+      ],
+      "warnings": []
+     }
+    ],
+    "errors": [],
+    "modelVersion": "2026-05-01"
+   }
+  }
  }
 ]

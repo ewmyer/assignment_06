@@ -5,7 +5,7 @@ Three kinds of check:
 - **Transforms on recorded responses** (no network). `tests/fixtures/` holds the
   portal's real answers for the five test reviews, so `sentences_table`,
   `opinions_table`, `entities_table`, `entity_mentions`, `build_mentions`,
-  `summarize_items`, `question_items` and `build_messages` are checked against
+  `summarize_items`, `question_scope` and `build_messages` are checked against
   exact, known output — the same output you can check by hand in the README.
 - **The API steps, live**, on the five test reviews into a temporary cache
   folder — including that a second run reads the cache instead of calling.
@@ -32,7 +32,7 @@ from reviews import (
     evidence_for,
     load_aliases,
     opinions_table,
-    question_items,
+    question_scope,
     sentences_table,
     sentiment_step,
     subjects_step,
@@ -177,39 +177,84 @@ QUESTIONS = {q["question"]: q["response"]["results"]["documents"][0]
              for q in fixture("question_entities.json")}
 
 
+def scope(items=(), locations=(), subjects=()):
+    return {"items": list(items), "locations": list(locations), "subjects": list(subjects)}
+
+
 @pytest.mark.parametrize(
     "question, expected",
     [
-        ("Do people like the mocha latte?", ["mocha latte"]),      # NER: Product
-        ("How is Patty doing?", ["Patty"]),                         # NER: Person
-        ("What do people say about the wifi?", ["wifi"]),           # NER misses it; the fallback finds it
-        ("Is parking a problem downtown?", []),                     # nobody in the test reviews mentions parking
+        # items: entity recognition finds products and people ...
+        ("Do people like the mocha latte?", scope(items=["mocha latte"])),
+        ("How is Patty doing?", scope(items=["Patty"])),
+        # ... but not "wifi"; the item names in the mentions catch it
+        ("What do people say about the wifi?", scope(items=["wifi"])),
+        # an item no review mentions is still what the question is about
+        ("Do people like the chai latte?", scope(items=["chai latte"])),
+        # locations and subjects come from the word lists in settings.py
+        ("Is parking a problem downtown?", scope(locations=["Armory Square"])),
+        ("Do customers like the Westcott location?", scope(locations=["Westcott"])),
+        ("What is the most popular product?", scope(subjects=["product"])),
+        ("How is the staff at Armory Square?",
+         scope(locations=["Armory Square"], subjects=["customer service"])),
+        ("Is the mocha latte better at Westcott or Armory Square?",
+         scope(items=["mocha latte"], locations=["Armory Square", "Westcott"])),
+        # nothing named: the scope is empty, and the answer uses every mention
+        ("What do customers complain about most?", scope()),
     ],
 )
-def test_question_items(question, expected):
-    known = sorted(expected_mentions()["item"].unique())
-    assert question_items(question, QUESTIONS[question], known, load_aliases()) == expected
+def test_question_scope(question, expected):
+    mentions = expected_mentions()
+    before = snapshot(mentions)
+    assert question_scope(question, QUESTIONS[question], mentions, load_aliases()) == expected
+    assert_unmodified(mentions, before, "question_scope")
+
+
+MOCHA_MESSAGE = "\n".join([
+    "Question: Do people like the mocha latte?",
+    "Facts: 2 mentions — 1 positive, 1 negative, 0 neutral or mixed.",
+    "Items, most mentioned first:",
+    "- mocha latte (product): 2 mentions, 1 positive, 1 negative",
+    "Review sentences:",
+    "- (Westcott, 2026-09-19, mocha latte, negative) The mocha latte was overpriced and lukewarm.",
+    "- (Westcott, 2026-10-10, mocha latte, positive) Best mocha latte in Syracuse!",
+])
 
 
 def test_build_messages():
-    evidence = evidence_for(expected_mentions(), ["mocha latte"])
+    evidence = evidence_for(expected_mentions(), scope(items=["mocha latte"]))
     messages = build_messages("Do people like the mocha latte?", evidence)
     assert messages[0] == {"role": "system", "content": SYSTEM_PROMPT}
     assert messages[1]["role"] == "user"
-    assert messages[1]["content"] == "\n".join([
-        "Question: Do people like the mocha latte?",
-        "Facts: 2 mentions — 1 positive, 1 negative, 0 neutral or mixed.",
-        "Review sentences:",
-        "- (Westcott, 2026-09-19, negative) The mocha latte was overpriced and lukewarm.",
-        "- (Westcott, 2026-10-10, positive) Best mocha latte in Syracuse!",
-    ])
+    assert messages[1]["content"] == MOCHA_MESSAGE
+
+
+def test_build_messages_counts_every_item():
+    evidence = evidence_for(expected_mentions(), scope(subjects=["product"]))
+    content = build_messages("What is the most popular product?", evidence)[1]["content"]
+    lines = content.split("\n")
+    assert lines[1] == "Facts: 6 mentions — 4 positive, 2 negative, 0 neutral or mixed."
+    start = lines.index("Items, most mentioned first:")
+    assert lines[start + 1:start + 6] == [
+        "- mocha latte (product): 2 mentions, 1 positive, 1 negative",
+        "- almond croissant (product): 1 mentions, 1 positive, 0 negative",
+        "- blueberry scone (product): 1 mentions, 0 positive, 1 negative",
+        "- cold brew (product): 1 mentions, 1 positive, 0 negative",
+        "- oat milk cortado (product): 1 mentions, 1 positive, 0 negative",
+    ], "one line per row of summarize_items(evidence), in its order"
+    assert lines[start + 6] == "Review sentences:"
 
 
 def test_build_messages_limits_the_evidence():
-    evidence = pd.concat([evidence_for(expected_mentions(), ["mocha latte"])] * 15, ignore_index=True)
+    evidence = pd.concat([evidence_for(expected_mentions(), scope(items=["mocha latte"]))] * 15,
+                         ignore_index=True)
     content = build_messages("Q?", evidence, limit=20)[1]["content"]
-    assert content.count("\n- ") == 20, "at most `limit` review sentences"
+    sentences = content.split("Review sentences:\n")[1]
+    assert sentences.count("- (") == 20, "at most `limit` review sentences"
     assert "Facts: 30 mentions — 15 positive, 15 negative" in content, "the facts count every row"
+    assert "- mocha latte (product): 30 mentions, 15 positive, 15 negative" in content, (
+        "so do the item counts"
+    )
 
 
 # --- The API steps, live ------------------------------------------------------------------
@@ -299,7 +344,8 @@ def test_app_filters(test_set):
     assert metrics(app)["Mentions"] == "2", "Westcott products: two mocha lattes"
 
 
-def test_app_asks_the_model(test_set, monkeypatch):
+def ask_with_fake_model(monkeypatch, question):
+    """Ask a question on the page with `ask_llm` swapped out; return (app, messages sent)."""
     sent = []
 
     def fake_ask_llm(messages):
@@ -308,26 +354,33 @@ def test_app_asks_the_model(test_set, monkeypatch):
 
     monkeypatch.setattr(reviews, "ask_llm", fake_ask_llm)
     app = load_app(APP)
-    widget(app.text_input, "question", "text_input").set_value("Do people like the mocha latte?")
+    widget(app.text_input, "question", "text_input").set_value(question)
     widget(app.button, "ask", "button").click()
     app.run()
     no_exception(app, APP)
+    return app, sent
+
+
+def test_app_asks_the_model(test_set, monkeypatch):
+    app, sent = ask_with_fake_model(monkeypatch, "Do people like the mocha latte?")
     assert len(sent) == 1, "clicking Ask should call ask_llm once"
-    assert sent[0] == build_messages("Do people like the mocha latte?",
-                                     evidence_for(expected_mentions(), ["mocha latte"])), (
+    evidence = evidence_for(expected_mentions(), scope(items=["mocha latte"]))
+    assert sent[0] == build_messages("Do people like the mocha latte?", evidence), (
         "the page should send build_messages(question, evidence) for the mocha latte"
     )
     assert "FAKE ANSWER" in page_text(app), "show the model's reply on the page"
 
 
-def test_app_does_not_ask_about_nothing(test_set, monkeypatch):
-    sent = []
-    monkeypatch.setattr(reviews, "ask_llm", lambda messages: sent.append(messages) or "nope")
-    app = load_app(APP)
-    widget(app.text_input, "question", "text_input").set_value("Is parking a problem downtown?")
-    widget(app.button, "ask", "button").click()
-    app.run()
-    no_exception(app, APP)
-    assert not sent, "no matching mentions: do not spend a call on the model"
-    assert app.warning, "say so with an st.warning"
+def test_app_answers_from_every_mention(test_set, monkeypatch):
+    question = "What do customers complain about most?"
+    _app, sent = ask_with_fake_model(monkeypatch, question)
+    assert len(sent) == 1, "a question that names nothing is still answered"
+    assert sent[0] == build_messages(question, expected_mentions()), (
+        "with every mention as the evidence"
+    )
 
+
+def test_app_does_not_ask_about_nothing(test_set, monkeypatch):
+    app, sent = ask_with_fake_model(monkeypatch, "Do people like the chai latte?")
+    assert not sent, "no review mentions the chai latte: do not spend a call on the model"
+    assert app.warning, "say so with an st.warning"

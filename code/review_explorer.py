@@ -4,12 +4,14 @@ review_explorer.py — what Salt City Coffee's customers are saying, at a glance
 The owner reads every review on the shop's website, but thirty reviews across
 three locations is more than anyone can hold in their head. This page shows
 what customers praise and complain about — by location and by subject — and
-answers plain-English questions like "Do people like the mocha latte?" from the
-reviews themselves, with the evidence underneath.
+answers plain-English questions like "Do people like the mocha latte?" or "What
+is the most popular product?" from the reviews themselves, with the evidence
+underneath.
 
 The page is assembly again: `analyze_reviews` does all the API work (from the
 cache after the first run), and the Q&A box is three calls you have already
-written — find the items, build the messages, ask the model.
+written — find the question's scope and evidence, build the messages, ask the
+model.
 
 Run it:  Run and Debug -> "Streamlit Run: Current File"
 Test it: pytest tests/test_pipeline.py -k app
@@ -35,10 +37,12 @@ Test it: pytest tests/test_pipeline.py -k app
 #   "What people said": the filtered mentions                        (st.dataframe)
 #   "Ask the reviews": st.text_input key "question", st.button "Ask" key "ask"
 #   when Ask is clicked and the question is not blank:
-#       items, evidence <- answer_question(question, mentions, load_aliases())
+#       scope, evidence <- answer_question(question, mentions, load_aliases())
 #       no evidence  -> st.warning, and do NOT call the model
-#       otherwise    -> answer <- ask_llm(build_messages(question, evidence))
-#                       show the answer, a caption naming the items, the evidence
+#       otherwise    -> answer <- ask_llm(build_messages(question, evidence)),
+#                       inside `with st.spinner(...)` (a new question is slow)
+#                       show the answer, a caption with describe_scope(scope),
+#                       and the evidence
 #
 # What the page does NOT do: call the API directly, group, or count by hand
 # beyond the metrics. That logic lives in the package.

@@ -21,11 +21,12 @@ from .aspects import (
     answer_question,
     build_mentions,
     build_messages,
+    describe_scope,
     entity_mentions,
     evidence_for,
     item_name,
     load_aliases,
-    question_items,
+    question_scope,
     summarize_items,
 )
 from .pipeline import (
@@ -43,7 +44,7 @@ __all__ = [
     "sentiment_step", "entities_step", "sentences_table", "opinions_table",
     "entities_table", "subjects_step",
     "entity_mentions", "load_aliases", "item_name", "build_mentions", "analyze_reviews",
-    "summarize_items", "question_items", "evidence_for", "build_messages",
-    "answer_question",
+    "summarize_items", "question_scope", "evidence_for", "describe_scope",
+    "build_messages", "answer_question",
     "REVIEWS_FILE", "TEST_REVIEWS_FILE", "cache_path", "get_api_key",
 ]

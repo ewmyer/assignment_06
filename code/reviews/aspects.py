@@ -28,7 +28,14 @@ from .pipeline import (
     sentiment_step,
     subjects_step,
 )
-from .settings import ALIASES_FILE, MENTION_CATEGORIES, SYSTEM_PROMPT, cache_path
+from .settings import (
+    ALIASES_FILE,
+    LOCATION_WORDS,
+    MENTION_CATEGORIES,
+    SUBJECT_WORDS,
+    SYSTEM_PROMPT,
+    cache_path,
+)
 
 MENTION_COLUMNS = ["review_id", "sentence_id", "mention", "mention_sentiment",
                    "assessments", "mention_offset", "source"]
@@ -118,26 +125,61 @@ def summarize_items(mentions: pd.DataFrame) -> pd.DataFrame:
 # --- The Q&A box --------------------------------------------------------------------
 
 
-def question_items(question: str, entity_document: dict, known_items: list,
-                   aliases: dict) -> list:
-    """Which items the question is about, using NER plus a fallback.
+def question_scope(question: str, entity_document: dict, mentions: pd.DataFrame,
+                   aliases: dict) -> dict:
+    """What a question is about: the items, locations and subjects it names.
+
+    Returns a dict with three lists, any of which may be empty:
+
+        {"items": [...], "locations": [...], "subjects": [...]}
 
     `entity_document` is `get_entities(question)["results"]["documents"][0]`.
-    Its Person and Product entities, put through `item_name`, are candidates;
-    so is every item in `known_items` whose lowercased name appears in the
-    lowercased question (NER does not know that "wifi" or "parking" are things). Return
-    the candidates that are in `known_items`, without repeats, entities first.
 
-        question_items("Do people like the mocha latte?", ...)  ->  ["mocha latte"]
-        question_items("Is parking bad?", ...)                  ->  ["parking"]
+    - **items**: its Person and Product entities, put through `item_name` —
+      kept even when no review mentions them, so "chai latte" is in the scope
+      of a question about it — then every item in `mentions["item"]` whose
+      lowercased name appears in the lowercased question (entity recognition
+      does not know that "wifi" or "parking" are things). No repeats,
+      entities first.
+    - **locations**: each location in `LOCATION_WORDS` with any of its words in
+      the lowercased question, in `LOCATION_WORDS` order.
+    - **subjects**: the same, with `SUBJECT_WORDS`.
+
+        question_scope("Do people like the mocha latte?", ...)
+            -> {"items": ["mocha latte"], "locations": [], "subjects": []}
+        question_scope("How is the staff at Armory Square?", ...)
+            -> {"items": [], "locations": ["Armory Square"],
+                "subjects": ["customer service"]}
     """
     # TODO: your code here
     pass
 
 
-def evidence_for(mentions: pd.DataFrame, items: list) -> pd.DataFrame:
-    """The mentions about any of `items` — the rows the answer will be built from."""
-    return mentions[mentions["item"].isin(items)].reset_index(drop=True)
+SCOPE_COLUMNS = {"items": "item", "subjects": "subject", "locations": "location"}
+
+
+def evidence_for(mentions: pd.DataFrame, scope: dict) -> pd.DataFrame:
+    """The mentions inside a question's scope — the rows the answer is built from.
+
+    Items and subjects say *what* the question is about, so a row matches when
+    its item is one of the items **or** its subject is one of the subjects.
+    Locations say *where*, and narrow that further. An empty list does not
+    filter, so a question that names nothing gets every mention.
+    """
+    selected = mentions
+    if scope["items"] or scope["subjects"]:
+        what = (mentions["item"].isin(scope["items"])
+                | mentions["subject"].isin(scope["subjects"]))
+        selected = selected[what]
+    if scope["locations"]:
+        selected = selected[selected["location"].isin(scope["locations"])]
+    return selected.reset_index(drop=True)
+
+
+def describe_scope(scope: dict) -> str:
+    """A scope in words, for the page: "mocha latte · Westcott", or "all reviews"."""
+    parts = [", ".join(scope[key]) for key in SCOPE_COLUMNS if scope[key]]
+    return " · ".join(parts) if parts else "all reviews"
 
 
 def build_messages(question: str, evidence: pd.DataFrame, limit: int = 20) -> list:
@@ -152,21 +194,27 @@ def build_messages(question: str, evidence: pd.DataFrame, limit: int = 20) -> li
 
         Question: <question>
         Facts: <n> mentions — <p> positive, <q> negative, <r> neutral or mixed.
+        Items, most mentioned first:
+        - <item> (<subject>): <mentions> mentions, <pos> positive, <neg> negative
+        - ...
         Review sentences:
-        - (<location>, <date>, <mention_sentiment>) <sentence_text>
+        - (<location>, <date>, <item>, <mention_sentiment>) <sentence_text>
         - ...
 
-    with one `- ...` line per evidence row, at most `limit` of them. pandas does
-    the counting; the language model only writes the sentence. Language models
-    are bad at counting and good at prose — give each the job it is good at.
+    One item line per row of `summarize_items(evidence)`, in its order (`<pos>`
+    and `<neg>` are its `positive` and `negative` columns); one
+    sentence line per evidence row, at most `limit` of them. The counts cover
+    every row, so "what is the most popular product?" is answered from the
+    whole table, not from whichever sentences fit. pandas does the counting; the
+    language model only writes the answer. Language models are bad at counting
+    and good at prose — give each the job it is good at.
     """
     # TODO: your code here
     pass
 
 
 def answer_question(question: str, mentions: pd.DataFrame, aliases: dict):
-    """Find the items a question is about and their evidence: (items, evidence)."""
+    """What a question is about and the evidence for it: (scope, evidence)."""
     document = get_entities(question)["results"]["documents"][0]
-    known = sorted(mentions["item"].unique())
-    items = question_items(question, document, known, aliases)
-    return items, evidence_for(mentions, items)
+    scope = question_scope(question, document, mentions, aliases)
+    return scope, evidence_for(mentions, scope)

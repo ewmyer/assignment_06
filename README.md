@@ -12,8 +12,8 @@ about, and *how the writer feels about it*. That is a job for language AI, and y
 not have to train any: the **CENT iSchool IoT Portal** wraps Azure's language services
 and a pair of AI models behind a REST API. You will call it, cache what it says, turn
 the JSON into tables, and build a page where the owner can filter the results — or just
-type "Do people like the mocha latte?" and get an answer built from the reviews, with
-the evidence underneath.
+type "Do people like the mocha latte?" or "What is the most popular product?" and get an
+answer built from the reviews, with the evidence underneath.
 
 This is Unit 4 in one assignment: HTTP requests and status codes (4-1), POST, API keys
 and caching (4-2), and AI APIs — prompts, system prompts and temperature (4-3).
@@ -91,7 +91,7 @@ local dev container (**Option B**).
 
 1. Create your `.env` file ([Reference #1](#1-how-do-i-set-up-my-api-key)).
 2. Open the **Testing** panel and run the tests ([Reference #10](#10-how-do-i-run-automated-tests)).
-   You should see **0 passing and 45 failing** — every test is about a function you
+   You should see **0 passing and 53 failing** — every test is about a function you
    haven't written yet.
 
 ---
@@ -175,7 +175,7 @@ The full list is at https://portal.app.cent-su.org/doc.
 | 2 | `sentiment_step`, `entities_step` | `test_pipeline.py -k calls_then` |
 | 3 | `sentences_table`, `opinions_table`, `entities_table` | `test_pipeline.py -k table` |
 | 4 | `item_name`, `entity_mentions`, `subjects_step`, `build_mentions`, `analyze_reviews` | `test_unit.py -k item_name`, `test_pipeline.py -k "mentions or subjects or end_to_end"` |
-| 5 | `summarize_items`, `question_items`, `build_messages` | `test_pipeline.py -k "summarize or question or messages"` |
+| 5 | `summarize_items`, `question_scope`, `build_messages` | `test_pipeline.py -k "summarize or scope or messages"` |
 | 6 | `review_explorer.py` | `test_pipeline.py -k app` |
 | 7 | *(structure checks go green along the way)* | `test_code.py` |
 | 8 | `reflection.txt` | — |
@@ -230,8 +230,9 @@ span contains it and drops the ones opinion mining already found. `subjects_step
 in `pipeline.py`) asks the decision model what each mention is about
 ([Reference #7](#7-how-do-i-use-the-decision-model)) — slow the first time, seconds per
 mention, instant after. `build_mentions` puts everything together; `analyze_reviews`
-chains it all. Then `summarize_items` (a group-by, as in A5), `question_items` and
-`build_messages` ([Reference #8](#8-how-do-i-talk-to-the-language-model)).
+chains it all. Then `summarize_items` (a group-by, as in A5), `question_scope` and
+`build_messages` — the Q&A box's two halves: work out what a question is about, then
+hand the model the facts for it ([Reference #8](#8-how-do-i-talk-to-the-language-model)).
 
 ### Step 7 — Commit
 
@@ -247,18 +248,21 @@ Commit `step 3: aspects`, push, submit.
 | `st.dataframe` ×3 | | most praised (net > 0, top 5), most complained about (net < 0, top 5), what people said |
 | `st.text_input` | `question` | the owner's question |
 | `st.button` | `ask` | **Ask** |
-| `st.warning` | | when no mentions match the question — and then **no** call to the model |
+| `st.warning` | | when the question names something no review mentions — and then **no** call to the model |
 
-When **Ask** is clicked: `answer_question` (provided) finds the items and the evidence,
-`build_messages` writes the conversation, `ask_llm` answers; show the answer, a caption
-naming the items, and the evidence table. The page reads the reviews file from the
-`REVIEWS_FILE` environment variable when it is set (the tests point it at the five test
-reviews) and from `REVIEWS_FILE` in the package otherwise.
+When **Ask** is clicked: `answer_question` (provided) works out the question's scope and
+finds the evidence, `build_messages` writes the conversation, `ask_llm` answers (inside
+`st.spinner` — a question nobody has asked before can take a minute or more); show the
+answer, a caption with `describe_scope(scope)` (provided), and the evidence table. The
+page reads the reviews file from the `REVIEWS_FILE` environment variable when it is set
+(the tests point it at the five test reviews) and from `REVIEWS_FILE` in the package
+otherwise.
 
 The first time you run the page on the 30 reviews it builds the cache (a few minutes if
 you are the first person to run it, seconds otherwise). Try *"Do people like the mocha
 latte?"* — then pick each location in the filter and see why the answer mentions
-locations.
+locations. Then try *"What is the most popular product?"*, *"Do customers like the
+Westcott location?"* and *"What do customers complain about most?"*.
 
 ![Screenshot of review_explorer.py](review_explorer.png)
 
@@ -411,8 +415,8 @@ byte-for-byte the same, and the first time a question is asked it takes seconds.
 A **chat completion** takes the whole conversation as a list of messages:
 
 ```python
-[{"role": "system", "content": "You answer questions about ... Use only the facts provided."},
- {"role": "user", "content": "Question: ...\nFacts: ...\nReview sentences:\n- ..."}]
+[{"role": "system", "content": "You answer questions about ... Use only the facts provided..."},
+ {"role": "user", "content": "Question: ...\nFacts: ...\nItems, most mentioned first:\n- ...\nReview sentences:\n- ..."}]
 ```
 
 The **system prompt** sets the rules; the **user** message carries the question and
@@ -421,9 +425,26 @@ words every time — the same question gets the same answer, and the portal can 
 The reply is at `["choices"][0]["message"]["content"]`.
 
 This pattern — find the relevant data yourself, put only that in the prompt — is called
-**retrieval-augmented generation**, and it is how most real AI features work. It is also
-why `build_messages` gives the model the *counts*: language models are bad at counting
-and good at writing. pandas counts; the model writes.
+**retrieval-augmented generation**, and it is how most real AI features work. The
+*retrieval* half is yours:
+
+- **What is the question about?** `question_scope` looks for three things. *Items*
+  come from entity recognition (it knows "mocha latte" is a Product and "Patty" a
+  Person) plus the item names already in your mentions (it does not know "wifi" is a
+  thing). *Locations* and *subjects* come from the word lists in `settings.py`, because
+  entity recognition is unreliable there: it calls "Westcott" a Location but "Armory
+  Square" an Organization, and "product" nothing at all.
+- **Which rows answer it?** `evidence_for` (provided) keeps the mentions that match. A
+  question that names nothing — *"What do customers complain about most?"* — gets every
+  mention. A question that names something no review mentions — *"Do people like the
+  chai latte?"* on the five test reviews — gets none, and the page says so instead of
+  asking the model to make something up.
+
+It is also why `build_messages` gives the model the *counts* — overall, and per item
+from `summarize_items` — as well as example sentences. *"What is the most popular
+product?"* needs every product compared, and only 20 sentences fit; the item table has
+them all. Language models are bad at counting and good at writing. pandas counts; the
+model writes.
 
 ### 9. How do I debug a pipeline step?
 

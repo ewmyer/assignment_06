@@ -107,10 +107,31 @@ def subject_questions(mentions: list) -> dict:
 # Named-entity categories worth treating as a mention: people and products.
 MENTION_CATEGORIES = ("Person", "Product")
 
+# --- The Q&A box -------------------------------------------------------------------
+# Words that tell `question_scope` a question is about a location or a subject.
+# Entity recognition cannot do this job: it tags "Westcott" as a Location but
+# "Armory Square" as an Organization, and "product" as nothing at all. A short
+# list of the words people actually use is more reliable. Each word is matched
+# anywhere in the lowercased question, so "barista" also catches "baristas".
+
+LOCATION_WORDS = {
+    "Armory Square": ["armory", "downtown"],
+    "Westcott": ["westcott", "wescott"],          # a common misspelling
+    "University Hill": ["university hill", "the hill", "campus"],
+}
+
+SUBJECT_WORDS = {
+    "customer service": ["service", "staff", "barista", "employee", "cashier"],
+    "atmosphere": ["atmosphere", "vibe", "ambiance", "space", "decor"],
+    "product": ["product", "food", "drink", "menu", "pastry", "pastries"],
+}
+
 # The Q&A box's instructions to the language model.
 SYSTEM_PROMPT = (
     "You answer questions about Salt City Coffee from its customer reviews. "
-    "Use only the facts and review sentences provided; if they do not answer the "
-    "question, say so. Answer in two or three sentences, and mention locations "
-    "when opinions differ between them."
+    "Use only the facts provided: the counts cover every matching mention, and "
+    "the review sentences are examples. If the facts do not answer the question, "
+    "say so. Answer in two or three sentences. When asked what is most popular or "
+    "best, say which item is mentioned most and which is liked most if they "
+    "differ, and mention locations when opinions differ between them."
 )
