@@ -1,6 +1,7 @@
 pytest
 pandas
 requests
+python-dotenv
 streamlit>=1.56
 # The exact ruff GraderThan grades code style with — `ruff check` here matches the grade.
 ruff==0.16.9

@@ -17,7 +17,9 @@ named `.env` at the root of this repository, one line:
 
 `.env` is listed in `.gitignore`, so git will not offer to commit it. In GitHub
 Codespaces you can instead add a Codespaces secret named `CENT_API_KEY`. Either
-way `get_api_key()` finds it.
+way `get_api_key()` finds it: it uses python-dotenv's `load_dotenv()` to read
+`.env` into the environment, the standard way Python projects keep secrets out
+of their code.
 
 Your limit is 150 requests a day, but a request the portal has seen before is
 answered from its cache and does not count. Re-running the pipeline on the same
@@ -25,6 +27,8 @@ reviews is free.
 """
 
 import os
+
+from dotenv import load_dotenv
 
 # The portal. An environment variable can point the code somewhere else; you will
 # not need to.
@@ -40,22 +44,22 @@ ALIASES_FILE = os.path.join(DATA_DIR, "aliases.csv")
 
 
 def get_api_key() -> str:
-    """Your portal API key, from the CENT_API_KEY environment variable or `.env`."""
+    """Your portal API key, from the CENT_API_KEY environment variable or `.env`.
+
+    `load_dotenv` (from the python-dotenv package) reads `.env` and puts each
+    NAME=value line into the environment variables, where `os.environ` can see
+    it. It never overwrites a variable that is already set — so a Codespaces
+    secret, or the grader's own key, wins over the file.
+    """
+    load_dotenv(os.path.join(REPO_ROOT, ".env"))
     key = os.environ.get("CENT_API_KEY", "").strip()
-    if key:
-        return key
-    env_file = os.path.join(REPO_ROOT, ".env")
-    if os.path.exists(env_file):
-        with open(env_file, encoding="utf-8") as fh:
-            for line in fh:
-                name, _, value = line.partition("=")
-                if name.strip() == "CENT_API_KEY" and value.strip():
-                    return value.strip().strip('"').strip("'")
-    raise RuntimeError(
-        "No API key found. Create a file named .env at the root of the repository "
-        "containing one line, CENT_API_KEY=your-key-here (your key is on the Home "
-        "page of https://portal.app.cent-su.org). See README Reference #1."
-    )
+    if not key:
+        raise RuntimeError(
+            "No API key found. Create a file named .env at the root of the repository "
+            "containing one line, CENT_API_KEY=your-key-here (your key is on the Home "
+            "page of https://portal.app.cent-su.org). See README Reference #1."
+        )
+    return key
 
 
 def cache_path(reviews_file: str, step: str, ext: str = "json") -> str:

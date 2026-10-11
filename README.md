@@ -284,8 +284,12 @@ submit, read your feedback, fix anything flagged.
    CENT_API_KEY=paste-your-key-here
    ```
 
-3. That's it. `get_api_key()` in `settings.py` reads it. `.env` is in `.gitignore`, so
-   Source Control never offers to commit it — check that it does not appear there.
+3. That's it. `get_api_key()` in `settings.py` reads it with **python-dotenv**:
+   `load_dotenv()` copies each `NAME=value` line of `.env` into the environment
+   variables, and `os.environ.get("CENT_API_KEY")` reads it from there. It is the standard
+   way Python projects keep secrets out of their code, and you will see it again.
+   `.env` is in `.gitignore`, so Source Control never offers to commit it — check that it
+   does not appear there.
 
 **Never paste your key into a `.py` file.** Your fork is public; a key in a commit is a
 key anyone on the internet can use, and `git` remembers it even after you delete the
