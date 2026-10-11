@@ -1,0 +1,187 @@
+{
+  "version": 1,
+  "max": 10,
+  "code_path": "code",
+  "cases": [
+    {
+      "id": "test_unit.py",
+      "name": "Unit Tests",
+      "description": "Tests in test_unit.py — the four API functions: the request each one sends (URL, X-API-KEY header, form data vs. JSON, temperature=0, raise_for_status) checked without the network, plus one live call each to the CENT portal; and item_name, the mention cleaner.",
+      "judge": "auto",
+      "max": 2,
+      "metric": "ratio",
+      "levels": [
+        {
+          "id": "all",
+          "label": "All unit tests pass",
+          "points": 2,
+          "min": 1
+        },
+        {
+          "id": "most",
+          "label": "More than 1/2 of the unit tests pass",
+          "points": 1,
+          "min": 0.5
+        },
+        {
+          "id": "none",
+          "label": "Half or fewer of the unit tests pass",
+          "points": 0,
+          "min": 0
+        }
+      ]
+    },
+    {
+      "id": "test_pipeline.py",
+      "name": "Pipeline & App Tests",
+      "description": "Tests in test_pipeline.py — the JSON-to-table transforms (sentences_table, opinions_table, entities_table, entity_mentions, build_mentions, summarize_items, question_items, build_messages) on recorded portal responses for the five test reviews; the cached API steps live, including that a second run reads the cache; analyze_reviews end to end; and the Streamlit page driven with AppTest: metrics, filters, and the Q&A box's request to the language model.",
+      "judge": "auto",
+      "max": 3,
+      "metric": "ratio",
+      "levels": [
+        {
+          "id": "all",
+          "label": "All pipeline and app tests pass",
+          "points": 3,
+          "min": 1
+        },
+        {
+          "id": "most",
+          "label": "More than 1/2 of the pipeline and app tests pass",
+          "points": 2,
+          "min": 0.5
+        },
+        {
+          "id": "some",
+          "label": "At least one pipeline or app test passes",
+          "points": 1,
+          "min": 0.01
+        },
+        {
+          "id": "none",
+          "label": "No pipeline or app tests pass",
+          "points": 0,
+          "min": 0
+        }
+      ]
+    },
+    {
+      "id": "test_code.py",
+      "name": "Code Structure Tests",
+      "description": "Tests in test_code.py — the source is parsed and checked for how it is built: every API function builds its URL from BASE_URL, sends the key from get_api_key() in headers, posts form data or JSON as its endpoint expects, calls raise_for_status() and .json(); no API key in the code; only apicalls.py imports requests; the extract steps check and write their caches; the tables come from json_normalize with record_path and meta; summarize_items is a named-aggregation group-by; and the page assembles the pipeline.",
+      "judge": "auto",
+      "max": 2,
+      "metric": "ratio",
+      "levels": [
+        {
+          "id": "all",
+          "label": "All code structure tests pass",
+          "points": 2,
+          "min": 1
+        },
+        {
+          "id": "most",
+          "label": "More than 1/2 of the code structure tests pass",
+          "points": 1,
+          "min": 0.5
+        },
+        {
+          "id": "none",
+          "label": "Half or fewer of the code structure tests pass",
+          "points": 0,
+          "min": 0
+        }
+      ]
+    },
+    {
+      "id": "code_style",
+      "name": "Code style & readability",
+      "description": "Code is for computers AND humans. Four checks on everything in code/, the same ones `ruff check` and a read of your code will show you before you submit (README Reference #14). All four must pass for the point.",
+      "judge": "static",
+      "max": 1,
+      "feedback": "ai",
+      "requirements": [
+        {
+          "name": "No TODO comments left",
+          "description": "Every # TODO from the starter code is done and deleted.",
+          "forbid": [
+            {
+              "regex": "#[ \\t]*TODO"
+            }
+          ]
+        },
+        {
+          "name": "No leftover pass stubs",
+          "description": "Every function the starter left as `pass` is implemented.",
+          "forbid": [
+            {
+              "regex": "^[ \\t]*pass[ \\t]*$"
+            }
+          ]
+        },
+        {
+          "name": "Every function has a docstring",
+          "description": "Each function says what it does in a docstring.",
+          "forbid": [
+            {
+              "construct": "undocumented_function"
+            }
+          ]
+        },
+        {
+          "name": "No lint errors",
+          "description": "`ruff check` reports nothing (pycodestyle + pyflakes rules, line length 88).",
+          "forbid": [
+            {
+              "lint": "E,W,F",
+              "preview": true
+            }
+          ]
+        }
+      ],
+      "levels": [
+        {
+          "id": "clean",
+          "label": "Acceptable",
+          "points": 1,
+          "min": 1.0,
+          "description": "All four checks pass."
+        },
+        {
+          "id": "poor",
+          "label": "Unacceptable",
+          "points": 0,
+          "min": 0.0,
+          "description": "One or more checks fail."
+        }
+      ]
+    },
+    {
+      "id": "reflection",
+      "name": "Reflection",
+      "description": "Now that you've completed the assignment, think about what you did and share your thoughts. What did you learn? What confuses you? Where did you struggle? Where might you need more practice? A good reflection is **as specific as possible**, **uses the terminology of the problem domain** (what was learned in class / through readings), and **is actionable** (you can pursue next steps, or be aided in the pursuit).",
+      "judge": "ai",
+      "max": 2,
+      "levels": [
+        {
+          "id": "excellent",
+          "label": "Excellent",
+          "points": 2,
+          "description": "Well written, clear, and actionable. Uses terminology of the problem domain. Specific about what was learned and where more practice is needed."
+        },
+        {
+          "id": "needs_improvement",
+          "label": "Needs Improvement",
+          "points": 1,
+          "description": "Missing one of: well written, actionable, clear, uses terminilogy specific to assignment, demonstrated what was learned."
+        },
+        {
+          "id": "poor",
+          "label": "Missing or poor",
+          "points": 0,
+          "description": "Reflection missing or superficial."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+Write your reflection here.
+
+See reflection.md for what makes a good reflection — be specific, use the
+terminology from this assignment (REST API, endpoint, HTTP status code,
+raise_for_status, API key, form data vs. JSON body, rate limit, caching,
+json_normalize, record_path, meta, grain, opinion mining, named-entity
+recognition, prompt, system prompt, temperature), and make it actionable.

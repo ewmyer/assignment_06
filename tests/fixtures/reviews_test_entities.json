@@ -1,0 +1,136 @@
+[
+ {
+  "id": "1",
+  "entities": [
+   {
+    "text": "Pete",
+    "category": "Person",
+    "offset": 0,
+    "length": 4,
+    "confidenceScore": 1.0
+   },
+   {
+    "text": "barista",
+    "category": "PersonType",
+    "offset": 9,
+    "length": 7,
+    "confidenceScore": 0.98
+   },
+   {
+    "text": "oat milk",
+    "category": "Product",
+    "offset": 25,
+    "length": 8,
+    "confidenceScore": 0.94
+   },
+   {
+    "text": "almond croissant",
+    "category": "Product",
+    "offset": 57,
+    "length": 16,
+    "confidenceScore": 0.97
+   }
+  ],
+  "warnings": [],
+  "review_id": "T1"
+ },
+ {
+  "id": "1",
+  "entities": [
+   {
+    "text": "mocha latte",
+    "category": "Product",
+    "offset": 4,
+    "length": 11,
+    "confidenceScore": 0.99
+   }
+  ],
+  "warnings": [],
+  "review_id": "T2"
+ },
+ {
+  "id": "1",
+  "entities": [
+   {
+    "text": "Patty",
+    "category": "Person",
+    "offset": 77,
+    "length": 5,
+    "confidenceScore": 0.99
+   },
+   {
+    "text": "register",
+    "category": "Location",
+    "offset": 90,
+    "length": 8,
+    "confidenceScore": 0.51
+   }
+  ],
+  "warnings": [],
+  "review_id": "T3"
+ },
+ {
+  "id": "1",
+  "entities": [
+   {
+    "text": "cold brew",
+    "category": "Product",
+    "offset": 4,
+    "length": 9,
+    "confidenceScore": 0.9
+   },
+   {
+    "text": "blueberry scone",
+    "category": "Product",
+    "offset": 44,
+    "length": 15,
+    "confidenceScore": 0.99
+   },
+   {
+    "text": "Tally",
+    "category": "Person",
+    "offset": 79,
+    "length": 5,
+    "confidenceScore": 0.55
+   }
+  ],
+  "warnings": [],
+  "review_id": "T4"
+ },
+ {
+  "id": "1",
+  "entities": [
+   {
+    "text": "mocha latte",
+    "category": "Product",
+    "offset": 5,
+    "length": 11,
+    "confidenceScore": 0.94
+   },
+   {
+    "text": "Syracuse",
+    "category": "Location",
+    "subcategory": "City",
+    "offset": 20,
+    "length": 8,
+    "confidenceScore": 0.99
+   },
+   {
+    "text": "murals",
+    "category": "Product",
+    "offset": 38,
+    "length": 6,
+    "confidenceScore": 0.51
+   },
+   {
+    "text": "Otto",
+    "category": "Person",
+    "offset": 75,
+    "length": 4,
+    "confidenceScore": 0.97
+   }
+  ],
+  "warnings": [],
+  "review_id": "T5"
+ }
+]

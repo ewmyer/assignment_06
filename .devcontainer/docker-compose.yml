@@ -2,12 +2,12 @@ version: "3.8"
 
 services:
   app:
-    build:
-      context: ..
-      dockerfile: .devcontainer/Dockerfile
+    image: mafudge/ist356:latest
     volumes:
       - ..:/workspace:cached
     ports:
-      - "8888:8888"
-      - "8501:8501"
+      - "28888:8888" # jupyter
+      - "28501:28501" # streamlit
+      - "28502:28502" # streamlit ("Streamlit Run: Current File" launch config)
+      - "28000:28000" # fastapi
     command: sleep infinity

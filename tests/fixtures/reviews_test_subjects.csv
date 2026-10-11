@@ -1,0 +1,15 @@
+review_id,mention,subject,subject_confidence
+T1,Pete,customer service,0.94
+T1,oat milk,product,0.937
+T1,almond croissant,product,0.994
+T2,mocha latte,product,0.988
+T2,wifi,atmosphere,0.982
+T3,seating,atmosphere,0.987
+T3,music,atmosphere,0.99
+T3,Patty,customer service,0.978
+T4,brew,product,0.987
+T4,blueberry scone,product,0.989
+T4,Tally,customer service,0.905
+T5,mocha latte,product,0.977
+T5,murals,atmosphere,0.973
+T5,Otto,customer service,0.972

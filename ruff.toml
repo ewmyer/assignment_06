@@ -1,0 +1,16 @@
+# Code style — the same checks GraderThan runs for the "Code style & readability"
+# criterion (see rubric.json). From the repository root:
+#
+#     ruff check
+#
+# No output means the lint check passes. Only code/ is graded, so the tests, the
+# grader and the instructor tooling are left out here too.
+
+line-length = 88
+extend-exclude = ["tests", "grader", "tools", "conftest.py"]
+
+[lint]
+select = ["E", "W", "F"]
+# Preview turns on pycodestyle's spacing and blank-line rules (E2xx / E3xx), which
+# the grader checks.
+preview = true

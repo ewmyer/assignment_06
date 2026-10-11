@@ -1,0 +1,149 @@
+[
+ {
+  "question": "Do people like the mocha latte?",
+  "response": {
+   "kind": "EntityRecognitionResults",
+   "results": {
+    "documents": [
+     {
+      "id": "1",
+      "entities": [
+       {
+        "text": "people",
+        "category": "PersonType",
+        "offset": 3,
+        "length": 6,
+        "confidenceScore": 0.64
+       },
+       {
+        "text": "mocha latte",
+        "category": "Product",
+        "offset": 19,
+        "length": 11,
+        "confidenceScore": 0.98
+       }
+      ],
+      "warnings": []
+     }
+    ],
+    "errors": [],
+    "modelVersion": "2026-05-01"
+   }
+  }
+ },
+ {
+  "question": "What do people say about the wifi?",
+  "response": {
+   "kind": "EntityRecognitionResults",
+   "results": {
+    "documents": [
+     {
+      "id": "1",
+      "entities": [
+       {
+        "text": "people",
+        "category": "PersonType",
+        "offset": 8,
+        "length": 6,
+        "confidenceScore": 0.69
+       },
+       {
+        "text": "wifi",
+        "category": "Skill",
+        "offset": 29,
+        "length": 4,
+        "confidenceScore": 0.74
+       }
+      ],
+      "warnings": []
+     }
+    ],
+    "errors": [],
+    "modelVersion": "2026-05-01"
+   }
+  }
+ },
+ {
+  "question": "How is Patty doing?",
+  "response": {
+   "kind": "EntityRecognitionResults",
+   "results": {
+    "documents": [
+     {
+      "id": "1",
+      "entities": [
+       {
+        "text": "Patty",
+        "category": "Person",
+        "offset": 7,
+        "length": 5,
+        "confidenceScore": 1.0
+       }
+      ],
+      "warnings": []
+     }
+    ],
+    "errors": [],
+    "modelVersion": "2026-05-01"
+   }
+  }
+ },
+ {
+  "question": "Is parking a problem downtown?",
+  "response": {
+   "kind": "EntityRecognitionResults",
+   "results": {
+    "documents": [
+     {
+      "id": "1",
+      "entities": [
+       {
+        "text": "downtown",
+        "category": "Location",
+        "subcategory": "Structural",
+        "offset": 21,
+        "length": 8,
+        "confidenceScore": 0.78
+       }
+      ],
+      "warnings": []
+     }
+    ],
+    "errors": [],
+    "modelVersion": "2026-05-01"
+   }
+  }
+ },
+ {
+  "question": "Do people like the almond croissant?",
+  "response": {
+   "kind": "EntityRecognitionResults",
+   "results": {
+    "documents": [
+     {
+      "id": "1",
+      "entities": [
+       {
+        "text": "people",
+        "category": "PersonType",
+        "offset": 3,
+        "length": 6,
+        "confidenceScore": 0.74
+       },
+       {
+        "text": "almond croissant",
+        "category": "Product",
+        "offset": 19,
+        "length": 16,
+        "confidenceScore": 0.94
+       }
+      ],
+      "warnings": []
+     }
+    ],
+    "errors": [],
+    "modelVersion": "2026-05-01"
+   }
+  }
+ }
+]

@@ -1,0 +1,573 @@
+[
+ {
+  "id": "1",
+  "sentiment": "positive",
+  "confidenceScores": {
+   "positive": 1.0,
+   "neutral": 0.0,
+   "negative": 0.0
+  },
+  "sentences": [
+   {
+    "sentiment": "positive",
+    "confidenceScores": {
+     "positive": 1.0,
+     "neutral": 0.0,
+     "negative": 0.0
+    },
+    "offset": 0,
+    "length": 53,
+    "text": "Pete the barista made my oat milk cortado perfectly. ",
+    "targets": [],
+    "assessments": []
+   },
+   {
+    "sentiment": "positive",
+    "confidenceScores": {
+     "positive": 1.0,
+     "neutral": 0.0,
+     "negative": 0.0
+    },
+    "offset": 53,
+    "length": 45,
+    "text": "The almond croissant was flaky and delicious.",
+    "targets": [
+     {
+      "sentiment": "positive",
+      "confidenceScores": {
+       "positive": 0.98,
+       "negative": 0.02
+      },
+      "offset": 57,
+      "length": 16,
+      "text": "almond croissant",
+      "relations": [
+       {
+        "relationType": "assessment",
+        "ref": "#/documents/0/sentences/1/assessments/0"
+       },
+       {
+        "relationType": "assessment",
+        "ref": "#/documents/0/sentences/1/assessments/1"
+       }
+      ]
+     }
+    ],
+    "assessments": [
+     {
+      "sentiment": "positive",
+      "confidenceScores": {
+       "positive": 0.98,
+       "negative": 0.02
+      },
+      "offset": 78,
+      "length": 5,
+      "text": "flaky",
+      "isNegated": false
+     },
+     {
+      "sentiment": "positive",
+      "confidenceScores": {
+       "positive": 0.99,
+       "negative": 0.01
+      },
+      "offset": 88,
+      "length": 9,
+      "text": "delicious",
+      "isNegated": false
+     }
+    ]
+   }
+  ],
+  "warnings": [],
+  "review_id": "T1"
+ },
+ {
+  "id": "1",
+  "sentiment": "negative",
+  "confidenceScores": {
+   "positive": 0.0,
+   "neutral": 0.0,
+   "negative": 1.0
+  },
+  "sentences": [
+   {
+    "sentiment": "negative",
+    "confidenceScores": {
+     "positive": 0.0,
+     "neutral": 0.0,
+     "negative": 1.0
+    },
+    "offset": 0,
+    "length": 45,
+    "text": "The mocha latte was overpriced and lukewarm. ",
+    "targets": [
+     {
+      "sentiment": "negative",
+      "confidenceScores": {
+       "positive": 0.0,
+       "negative": 1.0
+      },
+      "offset": 4,
+      "length": 11,
+      "text": "mocha latte",
+      "relations": [
+       {
+        "relationType": "assessment",
+        "ref": "#/documents/0/sentences/0/assessments/0"
+       },
+       {
+        "relationType": "assessment",
+        "ref": "#/documents/0/sentences/0/assessments/1"
+       }
+      ]
+     }
+    ],
+    "assessments": [
+     {
+      "sentiment": "negative",
+      "confidenceScores": {
+       "positive": 0.0,
+       "negative": 1.0
+      },
+      "offset": 20,
+      "length": 10,
+      "text": "overpriced",
+      "isNegated": false
+     },
+     {
+      "sentiment": "negative",
+      "confidenceScores": {
+       "positive": 0.01,
+       "negative": 0.99
+      },
+      "offset": 35,
+      "length": 8,
+      "text": "lukewarm",
+      "isNegated": false
+     }
+    ]
+   },
+   {
+    "sentiment": "negative",
+    "confidenceScores": {
+     "positive": 0.0,
+     "neutral": 0.0,
+     "negative": 1.0
+    },
+    "offset": 45,
+    "length": 56,
+    "text": "The wifi kept dropping, so I couldn't get any work done.",
+    "targets": [
+     {
+      "sentiment": "negative",
+      "confidenceScores": {
+       "positive": 0.0,
+       "negative": 1.0
+      },
+      "offset": 49,
+      "length": 4,
+      "text": "wifi",
+      "relations": [
+       {
+        "relationType": "assessment",
+        "ref": "#/documents/0/sentences/1/assessments/0"
+       }
+      ]
+     }
+    ],
+    "assessments": [
+     {
+      "sentiment": "negative",
+      "confidenceScores": {
+       "positive": 0.0,
+       "negative": 1.0
+      },
+      "offset": 59,
+      "length": 8,
+      "text": "dropping",
+      "isNegated": false
+     }
+    ]
+   }
+  ],
+  "warnings": [],
+  "review_id": "T2"
+ },
+ {
+  "id": "1",
+  "sentiment": "mixed",
+  "confidenceScores": {
+   "positive": 0.5,
+   "neutral": 0.02,
+   "negative": 0.48
+  },
+  "sentences": [
+   {
+    "sentiment": "negative",
+    "confidenceScores": {
+     "positive": 0.05,
+     "neutral": 0.01,
+     "negative": 0.95
+    },
+    "offset": 0,
+    "length": 77,
+    "text": "I love the comfortable seating by the window, but the music is way too loud. ",
+    "targets": [
+     {
+      "sentiment": "positive",
+      "confidenceScores": {
+       "positive": 1.0,
+       "negative": 0.0
+      },
+      "offset": 23,
+      "length": 7,
+      "text": "seating",
+      "relations": [
+       {
+        "relationType": "assessment",
+        "ref": "#/documents/0/sentences/0/assessments/0"
+       },
+       {
+        "relationType": "assessment",
+        "ref": "#/documents/0/sentences/0/assessments/1"
+       }
+      ]
+     },
+     {
+      "sentiment": "negative",
+      "confidenceScores": {
+       "positive": 0.02,
+       "negative": 0.98
+      },
+      "offset": 54,
+      "length": 5,
+      "text": "music",
+      "relations": [
+       {
+        "relationType": "assessment",
+        "ref": "#/documents/0/sentences/0/assessments/2"
+       }
+      ]
+     }
+    ],
+    "assessments": [
+     {
+      "sentiment": "positive",
+      "confidenceScores": {
+       "positive": 1.0,
+       "negative": 0.0
+      },
+      "offset": 2,
+      "length": 4,
+      "text": "love",
+      "isNegated": false
+     },
+     {
+      "sentiment": "positive",
+      "confidenceScores": {
+       "positive": 1.0,
+       "negative": 0.0
+      },
+      "offset": 11,
+      "length": 11,
+      "text": "comfortable",
+      "isNegated": false
+     },
+     {
+      "sentiment": "negative",
+      "confidenceScores": {
+       "positive": 0.02,
+       "negative": 0.98
+      },
+      "offset": 67,
+      "length": 8,
+      "text": "too loud",
+      "isNegated": false
+     }
+    ]
+   },
+   {
+    "sentiment": "positive",
+    "confidenceScores": {
+     "positive": 0.96,
+     "neutral": 0.04,
+     "negative": 0.0
+    },
+    "offset": 77,
+    "length": 54,
+    "text": "Patty at the register was quick even with a long line.",
+    "targets": [
+     {
+      "sentiment": "positive",
+      "confidenceScores": {
+       "positive": 1.0,
+       "negative": 0.0
+      },
+      "offset": 77,
+      "length": 5,
+      "text": "Patty",
+      "relations": [
+       {
+        "relationType": "assessment",
+        "ref": "#/documents/0/sentences/1/assessments/0"
+       }
+      ]
+     }
+    ],
+    "assessments": [
+     {
+      "sentiment": "positive",
+      "confidenceScores": {
+       "positive": 1.0,
+       "negative": 0.0
+      },
+      "offset": 103,
+      "length": 5,
+      "text": "quick",
+      "isNegated": false
+     }
+    ]
+   }
+  ],
+  "warnings": [],
+  "review_id": "T3"
+ },
+ {
+  "id": "1",
+  "sentiment": "mixed",
+  "confidenceScores": {
+   "positive": 0.33,
+   "neutral": 0.08,
+   "negative": 0.59
+  },
+  "sentences": [
+   {
+    "sentiment": "positive",
+    "confidenceScores": {
+     "positive": 1.0,
+     "neutral": 0.0,
+     "negative": 0.0
+    },
+    "offset": 0,
+    "length": 40,
+    "text": "The cold brew was smooth and delicious. ",
+    "targets": [
+     {
+      "sentiment": "positive",
+      "confidenceScores": {
+       "positive": 1.0,
+       "negative": 0.0
+      },
+      "offset": 9,
+      "length": 4,
+      "text": "brew",
+      "relations": [
+       {
+        "relationType": "assessment",
+        "ref": "#/documents/0/sentences/0/assessments/0"
+       },
+       {
+        "relationType": "assessment",
+        "ref": "#/documents/0/sentences/0/assessments/1"
+       }
+      ]
+     }
+    ],
+    "assessments": [
+     {
+      "sentiment": "positive",
+      "confidenceScores": {
+       "positive": 1.0,
+       "negative": 0.0
+      },
+      "offset": 18,
+      "length": 6,
+      "text": "smooth",
+      "isNegated": false
+     },
+     {
+      "sentiment": "positive",
+      "confidenceScores": {
+       "positive": 1.0,
+       "negative": 0.0
+      },
+      "offset": 29,
+      "length": 9,
+      "text": "delicious",
+      "isNegated": false
+     }
+    ]
+   },
+   {
+    "sentiment": "negative",
+    "confidenceScores": {
+     "positive": 0.0,
+     "neutral": 0.02,
+     "negative": 0.98
+    },
+    "offset": 40,
+    "length": 39,
+    "text": "The blueberry scone was dry and stale. ",
+    "targets": [
+     {
+      "sentiment": "negative",
+      "confidenceScores": {
+       "positive": 0.0,
+       "negative": 1.0
+      },
+      "offset": 44,
+      "length": 15,
+      "text": "blueberry scone",
+      "relations": [
+       {
+        "relationType": "assessment",
+        "ref": "#/documents/0/sentences/1/assessments/0"
+       },
+       {
+        "relationType": "assessment",
+        "ref": "#/documents/0/sentences/1/assessments/1"
+       }
+      ]
+     }
+    ],
+    "assessments": [
+     {
+      "sentiment": "negative",
+      "confidenceScores": {
+       "positive": 0.0,
+       "negative": 1.0
+      },
+      "offset": 64,
+      "length": 3,
+      "text": "dry",
+      "isNegated": false
+     },
+     {
+      "sentiment": "negative",
+      "confidenceScores": {
+       "positive": 0.0,
+       "negative": 1.0
+      },
+      "offset": 72,
+      "length": 5,
+      "text": "stale",
+      "isNegated": false
+     }
+    ]
+   },
+   {
+    "sentiment": "negative",
+    "confidenceScores": {
+     "positive": 0.0,
+     "neutral": 0.22,
+     "negative": 0.78
+    },
+    "offset": 79,
+    "length": 38,
+    "text": "Tally at the register forgot my order.",
+    "targets": [],
+    "assessments": []
+   }
+  ],
+  "warnings": [],
+  "review_id": "T4"
+ },
+ {
+  "id": "1",
+  "sentiment": "positive",
+  "confidenceScores": {
+   "positive": 0.97,
+   "neutral": 0.03,
+   "negative": 0.0
+  },
+  "sentences": [
+   {
+    "sentiment": "positive",
+    "confidenceScores": {
+     "positive": 1.0,
+     "neutral": 0.0,
+     "negative": 0.0
+    },
+    "offset": 0,
+    "length": 30,
+    "text": "Best mocha latte in Syracuse! ",
+    "targets": [
+     {
+      "sentiment": "positive",
+      "confidenceScores": {
+       "positive": 1.0,
+       "negative": 0.0
+      },
+      "offset": 5,
+      "length": 11,
+      "text": "mocha latte",
+      "relations": [
+       {
+        "relationType": "assessment",
+        "ref": "#/documents/0/sentences/0/assessments/0"
+       }
+      ]
+     }
+    ],
+    "assessments": [
+     {
+      "sentiment": "positive",
+      "confidenceScores": {
+       "positive": 1.0,
+       "negative": 0.0
+      },
+      "offset": 0,
+      "length": 4,
+      "text": "Best",
+      "isNegated": false
+     }
+    ]
+   },
+   {
+    "sentiment": "positive",
+    "confidenceScores": {
+     "positive": 0.95,
+     "neutral": 0.05,
+     "negative": 0.0
+    },
+    "offset": 30,
+    "length": 65,
+    "text": "The new murals make the place feel cozy, and Otto always says hi.",
+    "targets": [
+     {
+      "sentiment": "positive",
+      "confidenceScores": {
+       "positive": 1.0,
+       "negative": 0.0
+      },
+      "offset": 38,
+      "length": 6,
+      "text": "murals",
+      "relations": [
+       {
+        "relationType": "assessment",
+        "ref": "#/documents/0/sentences/1/assessments/0"
+       }
+      ]
+     }
+    ],
+    "assessments": [
+     {
+      "sentiment": "positive",
+      "confidenceScores": {
+       "positive": 1.0,
+       "negative": 0.0
+      },
+      "offset": 65,
+      "length": 4,
+      "text": "cozy",
+      "isNegated": false
+     }
+    ]
+   }
+  ],
+  "warnings": [],
+  "review_id": "T5"
+ }
+]

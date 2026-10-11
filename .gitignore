@@ -162,3 +162,6 @@ cython_debug/
 #.idea/
 
 
+# Your portal API key lives here — never commit it
+.env
+cache/

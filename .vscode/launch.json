@@ -5,6 +5,9 @@
     "version": "0.2.0",
     "configurations": [
         {
+            // Runs the open file as a plain Python script — use this for
+            // code/explore.py, which runs the pipeline one step at a time so
+            // breakpoints inside your functions stop. See README Reference #9.
             "name": "Python Debugger: Current File",
             "type": "debugpy",
             "request": "launch",
@@ -12,11 +15,26 @@
             "console": "integratedTerminal"
         },
         {
+            // Runs the open file as a Streamlit app on port 28502 — the same as
+            // typing `streamlit run code/payroll_report_app.py` in a terminal,
+            // except that breakpoints work.
             "name": "Streamlit Run: Current File",
             "type": "debugpy",
             "request": "launch",
             "module": "streamlit",
+            "env": {
+                "STREAMLIT_SERVER_PORT": "28502"
+            },
             "args": ["run", "${file}"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "FastAPI: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "cwd": "${fileDirname}",
+            "args": ["${fileBasenameNoExtension}:app", "--host", "0.0.0.0", "--port", "28000"],
             "console": "integratedTerminal"
         }
     ]

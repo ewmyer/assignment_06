@@ -1,9 +1,0 @@
-{
-    "criteria" : [
-       "1. There are at least 2 Github commits",
-       "2. All tests must pass. Pass rate should be 100 %",
-       "3. Code similarity for each file in the assignment should be at least 50 %",
-       "4. The student reflection is acceptable"
-    ],
-   "files" : ["apicalls.py", "assignment_etl.py"]
-}
