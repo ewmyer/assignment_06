@@ -214,7 +214,7 @@ MOCHA_MESSAGE = "\n".join([
     "Question: Do people like the mocha latte?",
     "Facts: 2 mentions — 1 positive, 1 negative, 0 neutral or mixed.",
     "Items, most mentioned first:",
-    "- mocha latte (product): 2 mentions, 1 positive, 1 negative",
+    "- mocha latte (product): 2 mentions, 1 positive, 1 negative, net +0",
     "Review sentences:",
     "- (Westcott, 2026-09-19, mocha latte, negative) The mocha latte was overpriced and lukewarm.",
     "- (Westcott, 2026-10-10, mocha latte, positive) Best mocha latte in Syracuse!",
@@ -236,11 +236,11 @@ def test_build_messages_counts_every_item():
     assert lines[1] == "Facts: 6 mentions — 4 positive, 2 negative, 0 neutral or mixed."
     start = lines.index("Items, most mentioned first:")
     assert lines[start + 1:start + 6] == [
-        "- mocha latte (product): 2 mentions, 1 positive, 1 negative",
-        "- almond croissant (product): 1 mentions, 1 positive, 0 negative",
-        "- blueberry scone (product): 1 mentions, 0 positive, 1 negative",
-        "- cold brew (product): 1 mentions, 1 positive, 0 negative",
-        "- oat milk cortado (product): 1 mentions, 1 positive, 0 negative",
+        "- mocha latte (product): 2 mentions, 1 positive, 1 negative, net +0",
+        "- almond croissant (product): 1 mentions, 1 positive, 0 negative, net +1",
+        "- blueberry scone (product): 1 mentions, 0 positive, 1 negative, net -1",
+        "- cold brew (product): 1 mentions, 1 positive, 0 negative, net +1",
+        "- oat milk cortado (product): 1 mentions, 1 positive, 0 negative, net +1",
     ], "one line per row of summarize_items(evidence), in its order"
     assert lines[start + 6] == "Review sentences:"
 
@@ -252,7 +252,7 @@ def test_build_messages_limits_the_evidence():
     sentences = content.split("Review sentences:\n")[1]
     assert sentences.count("- (") == 20, "at most `limit` review sentences"
     assert "Facts: 30 mentions — 15 positive, 15 negative" in content, "the facts count every row"
-    assert "- mocha latte (product): 30 mentions, 15 positive, 15 negative" in content, (
+    assert "- mocha latte (product): 30 mentions, 15 positive, 15 negative, net +0" in content, (
         "so do the item counts"
     )
 

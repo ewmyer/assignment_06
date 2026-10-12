@@ -41,7 +41,7 @@ Test it: pytest tests/test_pipeline.py -k app
 #       scope, evidence <- answer_question(question, mentions, load_aliases())
 #       no evidence  -> st.warning, and do NOT call the model
 #       otherwise    -> answer <- ask_llm(build_messages(question, evidence)),
-#                       inside `with st.spinner(...)` (a new question is slow)
+#                       inside `with st.spinner(...)` (it takes a few seconds)
 #                       show the answer, a caption with describe_scope(scope),
 #                       and the evidence
 #

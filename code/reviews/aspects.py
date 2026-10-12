@@ -195,15 +195,16 @@ def build_messages(question: str, evidence: pd.DataFrame, limit: int = 20) -> li
         Question: <question>
         Facts: <n> mentions — <p> positive, <q> negative, <r> neutral or mixed.
         Items, most mentioned first:
-        - <item> (<subject>): <mentions> mentions, <pos> positive, <neg> negative
+        - <item> (<subject>): <m> mentions, <pos> positive, <neg> negative, net <net>
         - ...
         Review sentences:
         - (<location>, <date>, <item>, <mention_sentiment>) <sentence_text>
         - ...
 
-    One item line per row of `summarize_items(evidence)`, in its order (`<pos>`
-    and `<neg>` are its `positive` and `negative` columns); one
-    sentence line per evidence row, at most `limit` of them. The counts cover
+    One item line per row of `summarize_items(evidence)`, in its order: `<m>`,
+    `<pos>`, `<neg>` and `<net>` are its `mentions`, `positive`, `negative` and
+    `net` columns, with net written with its sign (`f"{net:+d}"` -> "+3", "-2",
+    "+0"). One sentence line per evidence row, at most `limit` of them. The counts cover
     every row, so "what is the most popular product?" is answered from the
     whole table, not from whichever sentences fit. pandas does the counting; the
     language model only writes the answer. Language models are bad at counting

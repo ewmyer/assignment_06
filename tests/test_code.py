@@ -26,7 +26,7 @@ API_FUNCTIONS = {
     "get_sentiment": ("/api/azure/sentiment", "data"),
     "get_entities": ("/api/azure/entityrecognition", "data"),
     "classify_mentions": ("/api/ollama/systemone", "json"),
-    "ask_llm": ("/api/ollama/chat/completions", "json"),
+    "ask_llm": ("/api/azure/foundry/chat/completions", "json"),
 }
 
 

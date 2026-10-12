@@ -18,7 +18,7 @@ import pytest
 import requests
 
 from reviews import ask_llm, classify_mentions, get_entities, get_sentiment, item_name
-from reviews.settings import BASE_URL, subject_questions
+from reviews.settings import BASE_URL, LLM_MODEL, LLM_REASONING_EFFORT, subject_questions
 
 T2 = "The mocha latte was overpriced and lukewarm. The wifi kept dropping, so I couldn't get any work done."
 
@@ -109,10 +109,12 @@ def test_ask_llm_request(fake_post):
     messages = [{"role": "system", "content": "Be brief."}, {"role": "user", "content": "Hi?"}]
     result = ask_llm(messages)
     call = only_call(fake_post, "ask_llm")
-    assert call["url"] == f"{BASE_URL}/api/ollama/chat/completions", f"wrong URL: {call['url']}"
+    assert call["url"] == f"{BASE_URL}/api/azure/foundry/chat/completions", f"wrong URL: {call['url']}"
     assert call.get("json") == messages, "the body is the conversation itself: json=messages"
     params = call.get("params") or {}
-    assert str(params.get("temperature")) == "0", "pass params={'temperature': 0}"
+    assert params == {"model": LLM_MODEL, "reasoning_effort": LLM_REASONING_EFFORT}, (
+        "pass params={'model': LLM_MODEL, 'reasoning_effort': LLM_REASONING_EFFORT}"
+    )
     assert result == "Mostly yes.", "return only the reply text: ['choices'][0]['message']['content']"
 
 

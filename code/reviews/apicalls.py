@@ -21,7 +21,13 @@ This step is walked through line by line. The next two steps give you less.
 
 import requests
 
-from .settings import BASE_URL, get_api_key, subject_questions
+from .settings import (
+    BASE_URL,
+    LLM_MODEL,
+    LLM_REASONING_EFFORT,
+    get_api_key,
+    subject_questions,
+)
 
 
 def get_sentiment(text: str) -> dict:
@@ -96,18 +102,23 @@ def classify_mentions(review_text: str, mentions: list) -> dict:
 def ask_llm(messages: list) -> str:
     """Send a conversation to the language model; return its reply as a string.
 
-    POST {BASE_URL}/api/ollama/chat/completions. The body is the conversation
-    itself — a JSON **list** of `{"role": ..., "content": ...}` dicts — and the
-    query string carries `temperature=0`, so the same question gets the same
-    answer (and the portal's cache can answer it the second time).
+    POST {BASE_URL}/api/azure/foundry/chat/completions. The body is the
+    conversation itself — a JSON **list** of `{"role": ..., "content": ...}`
+    dicts. The query string says which model to use and how hard it should
+    think: `model=LLM_MODEL` and `reasoning_effort=LLM_REASONING_EFFORT` (both
+    in settings.py). There is no `temperature`: reasoning models do not have
+    one, and the portal ignores it. Instead the portal caches each answer for a
+    day, so the same conversation gets the same answer — and a repeat does not
+    count against your daily limit.
 
     The reply text is at `response.json()["choices"][0]["message"]["content"]`
     (lesson 4-3). Return just that string.
 
     How to build it:
 
-    - URL and headers as before, path `/api/ollama/chat/completions`.
-    - `requests.post(url, headers=headers, json=messages, params={"temperature": 0})`
+    - URL and headers as before, path `/api/azure/foundry/chat/completions`.
+    - `params = {"model": LLM_MODEL, "reasoning_effort": LLM_REASONING_EFFORT}`
+    - `requests.post(url, headers=headers, json=messages, params=params)`
     - `raise_for_status()`, then dig the content out of the JSON and return it.
     """
     # TODO: your code here

@@ -126,6 +126,12 @@ SUBJECT_WORDS = {
     "product": ["product", "food", "drink", "menu", "pastry", "pastries"],
 }
 
+# The language model behind the Q&A box: GPT-6 Luna on Azure AI Foundry, through the
+# portal. It is a *reasoning* model — it thinks before it answers — and "low" effort is
+# plenty for two or three sentences from facts you hand it.
+LLM_MODEL = "gpt-6-luna"
+LLM_REASONING_EFFORT = "low"
+
 # The Q&A box's instructions to the language model.
 SYSTEM_PROMPT = (
     "You answer questions about Salt City Coffee from its customer reviews. "

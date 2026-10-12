@@ -16,7 +16,7 @@ type "Do people like the mocha latte?" or "What is the most popular product?" an
 answer built from the reviews, with the evidence underneath.
 
 This is Unit 4 in one assignment: HTTP requests and status codes (4-1), POST, API keys
-and caching (4-2), and AI APIs — prompts, system prompts and temperature (4-3).
+and caching (4-2), and AI APIs — prompts, system prompts and model settings (4-3).
 
 ## Meta
 
@@ -150,7 +150,7 @@ calls the first time anyone runs it, and free after that.
 | `/api/azure/sentiment` | POST | form: `text` | sentences, each with a sentiment, **targets** and **assessments** (opinion mining) |
 | `/api/azure/entityrecognition` | POST | form: `text` | entities: `text`, `category` (Person, Product, ...), `offset` |
 | `/api/ollama/systemone` | POST | JSON: `state`, `questions` | a fast **decision model**: one answer per question, with probabilities and a confidence |
-| `/api/ollama/chat/completions` | POST | JSON: a list of messages; `temperature` in the query string | a **language model**'s reply |
+| `/api/azure/foundry/chat/completions` | POST | JSON: a list of messages; `model` and `reasoning_effort` in the query string | a **language model**'s reply (GPT-6 Luna on Azure AI Foundry) |
 
 The full list is at https://portal.app.cent-su.org/doc.
 
@@ -253,7 +253,7 @@ Commit `step 3: aspects`, push, submit.
 
 When **Ask** is clicked: `answer_question` (provided) works out the question's scope and
 finds the evidence, `build_messages` writes the conversation, `ask_llm` answers (inside
-`st.spinner` — a question nobody has asked before can take a minute or more); show the
+`st.spinner` — the model takes a few seconds); show the
 answer, a caption with `describe_scope(scope)` (provided), and the evidence table. The
 page reads the reviews file from the `REVIEWS_FILE` environment variable when it is set
 (the tests point it at the five test reviews) and from `REVIEWS_FILE` in the package
@@ -327,7 +327,7 @@ somewhere else, later, with a `KeyError`.
 | --- | --- | --- |
 | `data={"text": text}` | a form, like a web page's `<form>` | the Azure endpoints |
 | `json=body` | the dict or list as JSON, with `Content-Type: application/json` | the AI endpoints |
-| `params={"temperature": 0}` | `?temperature=0` on the URL (the query string) | anywhere |
+| `params={"model": "gpt-6-luna"}` | `?model=gpt-6-luna` on the URL (the query string) | anywhere — here, the language model's settings |
 
 The API's documentation says which each endpoint wants. Send the wrong one and you get a
 4xx — which `raise_for_status()` reports immediately.
@@ -423,9 +423,22 @@ A **chat completion** takes the whole conversation as a list of messages:
 ```
 
 The **system prompt** sets the rules; the **user** message carries the question and
-everything the model is allowed to know. `temperature=0` makes it pick the most likely
-words every time — the same question gets the same answer, and the portal can cache it.
-The reply is at `["choices"][0]["message"]["content"]`.
+everything the model is allowed to know. The reply is at
+`["choices"][0]["message"]["content"]`.
+
+**Model settings go in the query string.** The portal's chat endpoint runs **GPT-6 Luna**
+on Azure AI Foundry, and `ask_llm` tells it two things with `params=`:
+
+| setting | value | what it does |
+| --- | --- | --- |
+| `model` | `LLM_MODEL` (`"gpt-6-luna"`) | which model answers. Name it even though it is the default — defaults change, and different models cost different amounts |
+| `reasoning_effort` | `LLM_REASONING_EFFORT` (`"low"`) | how long a **reasoning model** thinks before it answers. More effort helps with hard problems, but it is slower and the thinking is billed as output. Writing two sentences from facts you hand it is not hard |
+
+You may have met **temperature** in lesson 4-3: how much randomness the model uses when
+it picks each word. Reasoning models do not have one — the portal ignores a `temperature`
+you send it, so it does nothing. Consistency comes from somewhere else here: the portal caches each answer for a day,
+so the same conversation gets the same answer back (and a repeat does not count against
+your 150 requests). Change one character of the prompt and it is a new question.
 
 This pattern — find the relevant data yourself, put only that in the prompt — is called
 **retrieval-augmented generation**, and it is how most real AI features work. The
@@ -444,7 +457,7 @@ This pattern — find the relevant data yourself, put only that in the prompt �
   asking the model to make something up.
 
 It is also why `build_messages` gives the model the *counts* — overall, and per item
-from `summarize_items` — as well as example sentences. *"What is the most popular
+from `summarize_items`, net included — as well as example sentences. *"What is the most popular
 product?"* needs every product compared, and only 20 sentences fit; the item table has
 them all. Language models are bad at counting and good at writing. pandas counts; the
 model writes.
