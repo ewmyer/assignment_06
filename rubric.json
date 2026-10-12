@@ -6,7 +6,7 @@
     {
       "id": "test_unit.py",
       "name": "Unit Tests",
-      "description": "Tests in test_unit.py — the four API functions: the request each one sends (URL, X-API-KEY header, form data vs. JSON, temperature=0, raise_for_status) checked without the network, plus one live call each to the CENT portal; and item_name, the mention cleaner.",
+      "description": "Tests in test_unit.py — the four API functions: the request each one sends (URL, X-API-KEY header, form data vs. JSON, the model settings in the query string, raise_for_status) checked without the network, plus one live call each to the CENT portal; and item_name, the mention cleaner.",
       "judge": "auto",
       "max": 2,
       "metric": "ratio",
@@ -34,7 +34,7 @@
     {
       "id": "test_pipeline.py",
       "name": "Pipeline & App Tests",
-      "description": "Tests in test_pipeline.py — the JSON-to-table transforms (sentences_table, opinions_table, entities_table, entity_mentions, build_mentions, summarize_items, question_items, build_messages) on recorded portal responses for the five test reviews; the cached API steps live, including that a second run reads the cache; analyze_reviews end to end; and the Streamlit page driven with AppTest: metrics, filters, and the Q&A box's request to the language model.",
+      "description": "Tests in test_pipeline.py — the JSON-to-table transforms (sentences_table, opinions_table, entities_table, build_mentions, summarize_items, build_messages) on recorded portal responses for the five test reviews; the cached API steps live, including that a second run reads the cache; analyze_reviews end to end; and the Streamlit page driven with AppTest: metrics, filters, and the Q&A box's request to the language model.",
       "judge": "auto",
       "max": 3,
       "metric": "ratio",
@@ -68,7 +68,7 @@
     {
       "id": "test_code.py",
       "name": "Code Structure Tests",
-      "description": "Tests in test_code.py — the source is parsed and checked for how it is built: every API function builds its URL from BASE_URL, sends the key from get_api_key() in headers, posts form data or JSON as its endpoint expects, calls raise_for_status() and .json(); no API key in the code; only apicalls.py imports requests; the extract steps check and write their caches; the tables come from json_normalize with record_path and meta; summarize_items is a named-aggregation group-by; and the page assembles the pipeline.",
+      "description": "Tests in test_code.py — the source is parsed and checked for how it is built: every API function builds its URL from BASE_URL, sends the key from get_api_key() in headers, posts form data or JSON as its endpoint expects, calls raise_for_status() and .json(); no API key in the code; only apicalls.py imports requests; the extract steps check and write their caches; the tables come from json_normalize with record_path and meta; summarize_items is a pivot table with an engineered net column; and the page assembles the pipeline.",
       "judge": "auto",
       "max": 2,
       "metric": "ratio",
