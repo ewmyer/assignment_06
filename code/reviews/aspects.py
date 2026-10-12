@@ -43,7 +43,10 @@ MENTION_COLUMNS = ["review_id", "sentence_id", "mention", "mention_sentiment",
 
 def entity_mentions(entities: pd.DataFrame, sentences: pd.DataFrame,
                     opinions: pd.DataFrame) -> pd.DataFrame:
-    """Entities that opinion mining missed, as mentions with their sentence's sentiment.
+    """Entities opinion mining missed, as mentions with their sentence's sentiment.
+
+    *(Provided.)* Read it — `build_mentions` stacks its output under
+    `opinions_table`'s, and explore.py shows you what it returns.
 
     Same seven columns as `opinions_table`. Each entity is placed in the sentence
     whose span contains it — `sentence_offset <= entity_offset <
@@ -56,8 +59,36 @@ def entity_mentions(entities: pd.DataFrame, sentences: pd.DataFrame,
     other ("oat milk" inside "oat milk cortado"). Sorted by `review_id` then
     `mention_offset`, plain index.
     """
-    # TODO: your code here
-    pass
+    if entities.empty:
+        return pd.DataFrame(columns=MENTION_COLUMNS)
+    placed = pd.merge(entities, sentences, on="review_id")
+    inside = (placed["entity_offset"] >= placed["sentence_offset"]) & (
+        placed["entity_offset"] < placed["sentence_offset"] + placed["sentence_length"]
+    )
+    placed = placed[inside]
+
+    covered = {}
+    for row in opinions.to_dict("records"):
+        key = (row["review_id"], row["sentence_id"])
+        covered.setdefault(key, []).append(row["mention"].lower())
+
+    def is_covered(row) -> bool:
+        """True when an opinion target in the same sentence names this entity."""
+        text = row["entity_text"].lower()
+        targets = covered.get((row["review_id"], row["sentence_id"]), [])
+        return any(text in target or target in text for target in targets)
+
+    keep = placed[~placed.apply(is_covered, axis=1)] if len(placed) else placed
+    rows = pd.DataFrame({
+        "review_id": keep["review_id"],
+        "sentence_id": keep["sentence_id"],
+        "mention": keep["entity_text"],
+        "mention_sentiment": keep["sentence_sentiment"],
+        "assessments": "",
+        "mention_offset": keep["entity_offset"],
+        "source": "entity",
+    }, columns=MENTION_COLUMNS)
+    return rows.sort_values(["review_id", "mention_offset"]).reset_index(drop=True)
 
 
 def load_aliases() -> dict:

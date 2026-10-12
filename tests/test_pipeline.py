@@ -4,7 +4,7 @@ Three kinds of check:
 
 - **Transforms on recorded responses** (no network). `tests/fixtures/` holds the
   portal's real answers for the five test reviews, so `sentences_table`,
-  `opinions_table`, `entities_table`, `entity_mentions`, `build_mentions`,
+  `opinions_table`, `entities_table`, `build_mentions`,
   `summarize_items` and `build_messages` are checked against
   exact, known output — the same output you can check by hand in the README.
 - **The API steps, live**, on the five test reviews into a temporary cache
@@ -126,22 +126,6 @@ def test_entities_table():
 
 
 # --- Step 3 transforms ----------------------------------------------------------------
-
-
-def test_entity_mentions():
-    sentences, opinions, entities = tables()
-    before = snapshot(entities)
-    out = entity_mentions(entities, sentences, opinions)
-    assert list(out.columns) == OPINION_COLUMNS
-    assert out[["review_id", "sentence_id", "mention", "mention_sentiment"]].values.tolist() == [
-        ["T1", 0, "Pete", "positive"],
-        ["T1", 0, "oat milk", "positive"],
-        ["T4", 2, "Tally", "negative"],
-        ["T5", 1, "Otto", "positive"],
-    ], ("only entities opinion mining missed, each in the sentence whose span contains it, "
-        "with that sentence's sentiment")
-    assert (out["source"] == "entity").all()
-    assert_unmodified(entities, before, "entity_mentions")
 
 
 def test_build_mentions():

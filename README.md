@@ -18,6 +18,16 @@ answer built from the reviews, with the evidence underneath.
 This is Unit 4 in one assignment: HTTP requests and status codes (4-1), POST, API keys
 and caching (4-2), and AI APIs — prompts, system prompts and model settings (4-3).
 
+> **Plan for 6–10 hours, and start early.** This assignment is complex because it is
+> realistic: it is the kind of thing businesses actually build — take hundreds of
+> customer reviews, use AI services to work out who and what each one is about and how
+> the writer feels, and give the owner a page where she can ask questions of her own
+> data in plain English. Real projects like this chain several APIs, reshape nested
+> JSON, and only work when every step is right. Work through it in the order below,
+> commit after each step, and submit early — GraderThan's feedback tells you which step
+> to fix before you build on it. Expect `opinions_table` and `sentences_table` (Step 4)
+> to take the longest.
+
 ## Meta
 
 ### Learning Objectives
@@ -44,7 +54,7 @@ By the end of this assignment you will be able to:
     - `apicalls.py` — **Step 1, you write this.** One function per API endpoint (walked through line by line)
     - `pipeline.py` — **Step 2, you write this.** Cached API steps; JSON into tables (the steps described)
     - `aspects.py` — **Step 3, you write this.** Mentions, summaries, and the Q&A box's pieces (**on your own**)
-  - `review_explorer.py` — the **Streamlit page** (**on your own**)
+  - `review_explorer.py` — the **Streamlit page** (a step-by-step algorithm is in the file)
   - `explore.py` — **provided.** Runs the pipeline one step at a time so you can debug it
   - `reflection.txt` — **where you write your reflection** (graded)
 - `data/` — `reviews.csv` (30 reviews), `reviews_test.csv` (5 reviews you can check by hand), `aliases.csv`
@@ -54,7 +64,7 @@ By the end of this assignment you will be able to:
 - `.devcontainer/`, `.streamlit/`, `.vscode/` — container, Streamlit and editor configuration
 - `README.md`, `reflection.md`, `rubric.json`, `requirements.txt`, `ruff.toml` — these instructions, reflection guidance, grading, dependencies, style rules
 
-You write **sixteen functions** across three modules — most are under ten lines — and
+You write **fifteen functions** across three modules — most are under ten lines — and
 **one Streamlit page**.
 
 ### Prerequisites
@@ -91,7 +101,7 @@ local dev container (**Option B**).
 
 1. Create your `.env` file ([Reference #1](#1-how-do-i-set-up-my-api-key)).
 2. Open the **Testing** panel and run the tests ([Reference #10](#10-how-do-i-run-automated-tests)).
-   You should see **0 passing and 44 failing** — every test is about a function you
+   You should see **0 passing and 43 failing** — every test is about a function you
    haven't written yet.
 
 ---
@@ -174,7 +184,7 @@ The full list is at https://portal.app.cent-su.org/doc.
 | 1 | `get_sentiment`, `get_entities`, `classify_mentions`, `ask_llm` | `test_unit.py` — all but `item_name` |
 | 2 | `sentiment_step`, `entities_step` | `test_pipeline.py -k calls_then` |
 | 3 | `sentences_table`, `opinions_table`, `entities_table` | `test_pipeline.py -k table` |
-| 4 | `item_name`, `entity_mentions`, `subjects_step`, `build_mentions`, `analyze_reviews` | `test_unit.py -k item_name`, `test_pipeline.py -k "mentions or subjects or end_to_end"` |
+| 4 | `item_name`, `subjects_step`, `build_mentions`, `analyze_reviews` | `test_unit.py -k item_name`, `test_pipeline.py -k "mentions or subjects or end_to_end"` |
 | 5 | `summarize_items`, `build_messages` | `test_pipeline.py -k "summarize or messages"` |
 | 6 | `review_explorer.py` | `test_pipeline.py -k app` |
 | 7 | *(structure checks go green along the way)* | `test_code.py` |
@@ -225,8 +235,9 @@ Commit `step 2: pipeline`, push, submit.
 
 ### Step 6 — Part 3: `aspects.py` *(on your own)*
 
-The docstrings are the spec. `entity_mentions` places each entity in the sentence whose
-span contains it and drops the ones opinion mining already found. `subjects_step` (back
+The docstrings are the spec. Start by reading `entity_mentions` (provided): it places
+each entity in the sentence whose span contains it and drops the ones opinion mining
+already found, so its rows stack neatly under `opinions_table`'s. `subjects_step` (back
 in `pipeline.py`) asks the decision model what each mention is about
 ([Reference #7](#7-how-do-i-use-the-decision-model)) — slow the first time, seconds per
 mention, instant after. `build_mentions` puts everything together; `analyze_reviews`
@@ -240,7 +251,11 @@ other half of the Q&A box, working out what a question is about, is provided:
 
 Commit `step 3: aspects`, push, submit.
 
-### Step 8 — The app: `review_explorer.py` *(on your own)*
+### Step 8 — The app: `review_explorer.py`
+
+Open `code/review_explorer.py`: the imports are there, and below them is the page's
+algorithm, step by step, as comments. Write the code for each step under its comment and
+save to watch the page grow. The table below is the same contract at a glance.
 
 | widget | key | shows |
 | --- | --- | --- |
