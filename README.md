@@ -265,7 +265,9 @@ latte?"* — then pick each location in the filter and see why the answer mentio
 locations. Then try *"What is the most popular product?"*, *"Do customers like the
 Westcott location?"* and *"What do customers complain about most?"*.
 
-![Screenshot of review_explorer.py](review_explorer.png)
+![Screenshot of review_explorer.py: the location and subject filters, four metrics, the three tabs with What people said open, and the Ask the reviews box waiting on the model](review_explorer.png)
+
+*The finished page on all 30 reviews: filters and metrics at the top, the three tables as tabs, and a question on its way to the model (the spinner shows while it thinks).*
 
 ### Step 9 — Commit
 
