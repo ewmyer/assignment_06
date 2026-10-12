@@ -330,7 +330,11 @@ def test_app_shows_the_reviews(test_set):
     assert "Salt City Coffee — What Customers Are Saying" in page_text(app)
     shown = metrics(app)
     assert shown == {"Reviews": "5", "Mentions": "14", "Positive": "9", "Negative": "5"}, shown
-    assert len(app.dataframe) >= 3, "most praised, most complained about, and what people said"
+    labels = [tab.label for tab in app.tabs]
+    assert labels == ["Most praised", "Most complained about", "What people said"], (
+        f"three st.tabs, in this order: {labels}"
+    )
+    assert len(app.dataframe) >= 3, "a table in each tab"
 
 
 def test_app_filters(test_set):

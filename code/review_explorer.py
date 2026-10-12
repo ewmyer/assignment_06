@@ -32,9 +32,10 @@ Test it: pytest tests/test_pipeline.py -k app
 #       each "All" plus the sorted values in mentions
 #   four st.metric cards: Reviews (unique review_id), Mentions, Positive, Negative
 #   summary <- summarize_items(the filtered mentions)
-#   "Most praised": rows with net > 0, highest net first, top 5   (st.dataframe)
+#   three st.tabs, one st.dataframe in each:
+#   "Most praised": rows with net > 0, highest net first, top 5
 #   "Most complained about": rows with net < 0, lowest first, top 5
-#   "What people said": the filtered mentions                        (st.dataframe)
+#   "What people said": the filtered mentions
 #   "Ask the reviews": st.text_input key "question", st.button "Ask" key "ask"
 #   when Ask is clicked and the question is not blank:
 #       scope, evidence <- answer_question(question, mentions, load_aliases())

@@ -201,7 +201,8 @@ def test_app_assembles_the_pipeline():
     assert "reviews" in imported_modules(tree), f"{APP} should import from the reviews package"
     for name in ("analyze_reviews", "summarize_items", "answer_question", "build_messages", "ask_llm"):
         assert name in called, f"{APP} should call {name}()"
-    for widget in ("selectbox", "metric", "dataframe", "text_input", "button", "warning"):
+    for widget in ("selectbox", "metric", "tabs", "dataframe", "text_input", "button",
+                   "warning"):
         assert widget in called, f"{APP} should use st.{widget}(...)"
     assert not called & {"get_sentiment", "classify_mentions", "groupby"}, (
         f"{APP}: the page assembles — the API calls and the grouping belong in the package"

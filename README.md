@@ -245,7 +245,8 @@ Commit `step 3: aspects`, push, submit.
 | `st.title` | | `Salt City Coffee — What Customers Are Saying` |
 | `st.selectbox` ×2 | `location`, `subject` | `"All"` plus each location / subject |
 | `st.metric` ×4 | | `Reviews`, `Mentions`, `Positive`, `Negative` — for the filtered mentions |
-| `st.dataframe` ×3 | | most praised (net > 0, top 5), most complained about (net < 0, top 5), what people said |
+| `st.tabs` | | `Most praised`, `Most complained about`, `What people said` — one table in each |
+| `st.dataframe` ×3 | | most praised (net > 0, top 5), most complained about (net < 0, top 5), what people said (the filtered mentions) |
 | `st.text_input` | `question` | the owner's question |
 | `st.button` | `ask` | **Ask** |
 | `st.warning` | | when the question names something no review mentions — and then **no** call to the model |
