@@ -32,7 +32,7 @@ By the end of this assignment you will be able to:
 6. **Flatten nested JSON with `pd.json_normalize`** using `record_path`, `meta` and `record_prefix`, and walk JSON that is too deep for it with nested loops
 7. **Combine two AI services** — opinion mining and named-entity recognition — so each covers what the other misses
 8. **Use a decision model** to classify text into categories you define, and read its probabilities and confidence
-9. **Summarize with pandas, write with an LLM**: compute the facts with a group-by, then give a language model only those facts and the evidence
+9. **Summarize with pandas, write with an LLM**: compute the facts with a pivot table and an engineered column, then give a language model only those facts and the evidence
 10. **Build a Streamlit page around an AI pipeline**, with filters, metrics, and a question box that refuses to guess
 
 ### Assignment Layout
@@ -54,7 +54,7 @@ By the end of this assignment you will be able to:
 - `.devcontainer/`, `.streamlit/`, `.vscode/` — container, Streamlit and editor configuration
 - `README.md`, `reflection.md`, `rubric.json`, `requirements.txt`, `ruff.toml` — these instructions, reflection guidance, grading, dependencies, style rules
 
-You write **seventeen functions** across three modules — most are under ten lines — and
+You write **sixteen functions** across three modules — most are under ten lines — and
 **one Streamlit page**.
 
 ### Prerequisites
@@ -91,7 +91,7 @@ local dev container (**Option B**).
 
 1. Create your `.env` file ([Reference #1](#1-how-do-i-set-up-my-api-key)).
 2. Open the **Testing** panel and run the tests ([Reference #10](#10-how-do-i-run-automated-tests)).
-   You should see **0 passing and 53 failing** — every test is about a function you
+   You should see **0 passing and 44 failing** — every test is about a function you
    haven't written yet.
 
 ---
@@ -175,7 +175,7 @@ The full list is at https://portal.app.cent-su.org/doc.
 | 2 | `sentiment_step`, `entities_step` | `test_pipeline.py -k calls_then` |
 | 3 | `sentences_table`, `opinions_table`, `entities_table` | `test_pipeline.py -k table` |
 | 4 | `item_name`, `entity_mentions`, `subjects_step`, `build_mentions`, `analyze_reviews` | `test_unit.py -k item_name`, `test_pipeline.py -k "mentions or subjects or end_to_end"` |
-| 5 | `summarize_items`, `question_scope`, `build_messages` | `test_pipeline.py -k "summarize or scope or messages"` |
+| 5 | `summarize_items`, `build_messages` | `test_pipeline.py -k "summarize or messages"` |
 | 6 | `review_explorer.py` | `test_pipeline.py -k app` |
 | 7 | *(structure checks go green along the way)* | `test_code.py` |
 | 8 | `reflection.txt` | — |
@@ -230,9 +230,11 @@ span contains it and drops the ones opinion mining already found. `subjects_step
 in `pipeline.py`) asks the decision model what each mention is about
 ([Reference #7](#7-how-do-i-use-the-decision-model)) — slow the first time, seconds per
 mention, instant after. `build_mentions` puts everything together; `analyze_reviews`
-chains it all. Then `summarize_items` (a group-by, as in A5), `question_scope` and
-`build_messages` — the Q&A box's two halves: work out what a question is about, then
-hand the model the facts for it ([Reference #8](#8-how-do-i-talk-to-the-language-model)).
+chains it all. Then `summarize_items` — a pivot table, as in A5, plus one column you
+engineer, `net` — and `build_messages`, which hands the language model those facts. The
+other half of the Q&A box, working out what a question is about, is provided:
+`question_scope` and `evidence_for`. Read them before you write `build_messages`
+([Reference #8](#8-how-do-i-talk-to-the-language-model)).
 
 ### Step 7 — Commit
 
@@ -442,7 +444,7 @@ your 150 requests). Change one character of the prompt and it is a new question.
 
 This pattern — find the relevant data yourself, put only that in the prompt — is called
 **retrieval-augmented generation**, and it is how most real AI features work. The
-*retrieval* half is yours:
+*retrieval* half is provided — read `question_scope` and `evidence_for` in `aspects.py`:
 
 - **What is the question about?** `question_scope` looks for three things. *Items*
   come from entity recognition (it knows "mocha latte" is a Product and "Patty" a

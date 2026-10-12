@@ -173,17 +173,19 @@ def test_tables_use_json_normalize():
 
 
 def test_aspects_combine_and_summarize_with_pandas():
-    """build_mentions merges and concats; summarize_items is a groupby with named aggregation."""
+    """build_mentions merges and concats; summarize_items is a pivot table plus an engineered net."""
     tree = parse(ASPECTS)
     built = called_names(function(tree, "build_mentions"))
     assert "merge" in built and "concat" in built, (
         f"{ASPECTS}: build_mentions should stack with pd.concat and join with pd.merge"
     )
     summary = function(tree, "summarize_items")
-    assert "groupby" in called_names(summary), f"{ASPECTS}: summarize_items should use .groupby(...)"
-    aggs = calls_named(summary, "agg")
-    assert aggs and any(len(node.keywords) >= 3 for node in aggs), (
-        f"{ASPECTS}: summarize_items should use named aggregation: .agg(mentions=(...), ...)"
+    assert "pivot_table" in called_names(summary), (
+        f"{ASPECTS}: summarize_items should count with pd.pivot_table(...)"
+    )
+    assert "net" in {node.value for node in ast.walk(summary)
+                     if isinstance(node, ast.Constant) and isinstance(node.value, str)}, (
+        f"{ASPECTS}: summarize_items should engineer the net column: summary['net'] = ..."
     )
     analyze = called_names(function(tree, "analyze_reviews"))
     for step in ("sentiment_step", "entities_step", "sentences_table", "opinions_table",
@@ -204,7 +206,7 @@ def test_app_assembles_the_pipeline():
     for widget in ("selectbox", "metric", "tabs", "dataframe", "text_input", "button",
                    "warning"):
         assert widget in called, f"{APP} should use st.{widget}(...)"
-    assert not called & {"get_sentiment", "classify_mentions", "groupby"}, (
+    assert not called & {"get_sentiment", "classify_mentions", "groupby", "pivot_table"}, (
         f"{APP}: the page assembles — the API calls and the grouping belong in the package"
     )
     assert "print" not in called and "input" not in called, f"{APP}: use widgets, not the console"

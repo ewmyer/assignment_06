@@ -116,7 +116,21 @@ def summarize_items(mentions: pd.DataFrame) -> pd.DataFrame:
     Columns: `subject`, `item`, `mentions` (how many rows), `positive`,
     `negative` (how many of those rows have that `mention_sentiment`), and `net`
     (positive minus negative). Sorted by `mentions` descending, then `item`;
-    plain index. Named aggregation, as in Assignment 05.
+    plain index.
+
+    How to build it — a pivot table, as in Assignment 05, then one engineered
+    column:
+
+    - `pd.pivot_table` with `index=["subject", "item"]`,
+      `columns="mention_sentiment"`, `aggfunc="size"` and `fill_value=0`: one
+      row per item, one column of counts per sentiment.
+    - `mentions` is each row's total across those columns (`.sum(axis=1)`).
+    - `positive` and `negative` are two of the columns — but a sentiment that
+      never appears gets no column (filter the page to one location and there
+      may be no complaints at all). `table.get("negative", 0)` gives the column,
+      or 0 when there isn't one.
+    - **Engineer** `net` = `positive` - `negative`: one number that says whether
+      an item is loved or a problem.
     """
     # TODO: your code here
     pass
@@ -127,7 +141,10 @@ def summarize_items(mentions: pd.DataFrame) -> pd.DataFrame:
 
 def question_scope(question: str, entity_document: dict, mentions: pd.DataFrame,
                    aliases: dict) -> dict:
-    """What a question is about: the items, locations and subjects it names.
+    """What a question is about: its items, locations and subjects. *(Provided.)*
+
+    Read this one rather than write it — it is how the Q&A box decides what to
+    look up, and README Reference #8 walks through why it works this way.
 
     Returns a dict with three lists, any of which may be empty:
 
@@ -151,8 +168,26 @@ def question_scope(question: str, entity_document: dict, mentions: pd.DataFrame,
             -> {"items": [], "locations": ["Armory Square"],
                 "subjects": ["customer service"]}
     """
-    # TODO: your code here
-    pass
+    lowered = question.lower()
+    candidates = [
+        item_name(entity["text"], aliases)
+        for entity in entity_document["entities"]
+        if entity["category"] in MENTION_CATEGORIES
+    ]
+    known = sorted(mentions["item"].unique())
+    candidates += [item for item in known if item.lower() in lowered]
+    items = []
+    for item in candidates:
+        if item not in items:
+            items.append(item)
+
+    def named(word_lists: dict) -> list:
+        """The keys with at least one of their words in the question."""
+        return [name for name, words in word_lists.items()
+                if any(word in lowered for word in words)]
+
+    return {"items": items, "locations": named(LOCATION_WORDS),
+            "subjects": named(SUBJECT_WORDS)}
 
 
 SCOPE_COLUMNS = {"items": "item", "subjects": "subject", "locations": "location"}

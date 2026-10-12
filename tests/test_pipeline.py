@@ -5,7 +5,7 @@ Three kinds of check:
 - **Transforms on recorded responses** (no network). `tests/fixtures/` holds the
   portal's real answers for the five test reviews, so `sentences_table`,
   `opinions_table`, `entities_table`, `entity_mentions`, `build_mentions`,
-  `summarize_items`, `question_scope` and `build_messages` are checked against
+  `summarize_items` and `build_messages` are checked against
   exact, known output — the same output you can check by hand in the README.
 - **The API steps, live**, on the five test reviews into a temporary cache
   folder — including that a second run reads the cache instead of calling.
@@ -32,7 +32,6 @@ from reviews import (
     evidence_for,
     load_aliases,
     opinions_table,
-    question_scope,
     sentences_table,
     sentiment_step,
     subjects_step,
@@ -173,41 +172,20 @@ def test_summarize_items():
     assert_unmodified(mentions, before, "summarize_items")
 
 
-QUESTIONS = {q["question"]: q["response"]["results"]["documents"][0]
-             for q in fixture("question_entities.json")}
+def test_summarize_items_without_complaints():
+    """Filter to one sentiment and that pivot table has no "negative" column at all."""
+    mentions = expected_mentions()
+    praise = mentions[mentions["mention_sentiment"] == "positive"]
+    out = summarize_items(praise)
+    assert list(out.columns) == ["subject", "item", "mentions", "positive", "negative", "net"], (
+        "still all six columns when no mention is negative — table.get('negative', 0)"
+    )
+    assert out["negative"].tolist() == [0] * len(out)
+    assert out["net"].tolist() == out["positive"].tolist() == out["mentions"].tolist()
 
 
 def scope(items=(), locations=(), subjects=()):
     return {"items": list(items), "locations": list(locations), "subjects": list(subjects)}
-
-
-@pytest.mark.parametrize(
-    "question, expected",
-    [
-        # items: entity recognition finds products and people ...
-        ("Do people like the mocha latte?", scope(items=["mocha latte"])),
-        ("How is Patty doing?", scope(items=["Patty"])),
-        # ... but not "wifi"; the item names in the mentions catch it
-        ("What do people say about the wifi?", scope(items=["wifi"])),
-        # an item no review mentions is still what the question is about
-        ("Do people like the chai latte?", scope(items=["chai latte"])),
-        # locations and subjects come from the word lists in settings.py
-        ("Is parking a problem downtown?", scope(locations=["Armory Square"])),
-        ("Do customers like the Westcott location?", scope(locations=["Westcott"])),
-        ("What is the most popular product?", scope(subjects=["product"])),
-        ("How is the staff at Armory Square?",
-         scope(locations=["Armory Square"], subjects=["customer service"])),
-        ("Is the mocha latte better at Westcott or Armory Square?",
-         scope(items=["mocha latte"], locations=["Armory Square", "Westcott"])),
-        # nothing named: the scope is empty, and the answer uses every mention
-        ("What do customers complain about most?", scope()),
-    ],
-)
-def test_question_scope(question, expected):
-    mentions = expected_mentions()
-    before = snapshot(mentions)
-    assert question_scope(question, QUESTIONS[question], mentions, load_aliases()) == expected
-    assert_unmodified(mentions, before, "question_scope")
 
 
 MOCHA_MESSAGE = "\n".join([
