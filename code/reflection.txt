@@ -1,7 +1,28 @@
-Write your reflection here.
+On this assignment, I needed the most help turning the API responses into
+reliable tables and connecting the pipeline to the interactive app. The sentiment
+and named-entity endpoints return nested JSON, so I practiced using
+json_normalize with record_path and meta to change the grain from one document
+per review to one row per sentence or entity. Opinion mining was more difficult:
+each target points to its assessments through a JSON reference, which meant
+walking the nested structure and resolving those references rather than simply
+flattening the response. I also needed help combining opinion targets and named
+entities without keeping duplicate mentions.
 
-See reflection.md for what makes a good reflection — be specific, use the
-terminology from this assignment (REST API, endpoint, HTTP status code,
-raise_for_status, API key, form data vs. JSON body, rate limit, caching,
-json_normalize, record_path, meta, grain, opinion mining, named-entity
-recognition, prompt, system prompt, reasoning model), and make it actionable.
+I learned that caching belongs around the slow API calls, while the transforms
+should be easy to rerun on saved responses. The subject-classification step
+showed me why deterministic mention order matters when an endpoint caches
+requests. Building the item summary also helped me connect pivot tables to
+questions we want to answer: count positive and negative mentions, then engineer
+a net value. For the question box, the system prompt and user prompt have
+different jobs; the application should calculate counts and provide evidence,
+then let the model explain those facts instead of asking it to count.
+
+In the future, I want to get better at decomposing a larger task into small
+functions with explicit inputs, output columns, and row grain. Before coding a
+transform, I can write down what one row represents and test against a small
+fixture, including empty results and missing sentiment categories. I should also
+practice tracing nested JSON references with a small example before building
+the full table. For API work, I will test request shape and error handling with
+mock responses, verify that a second run reads the cache, and keep API keys out
+of source code. Finally, I can test UI filtering and question handling with
+fixture data and mocked model calls before relying on live API access.
